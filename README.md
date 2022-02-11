@@ -4,6 +4,8 @@
 ![](https://img.shields.io/badge/license-MIT-000000.svg)
 [![arXiv](https://img.shields.io/badge/arXiv-1909.05658-<color>.svg)](https://arxiv.org/abs/1909.05658)
 
+## Introduction
+
 <br/>
 
 Table of Contents
@@ -16,10 +18,6 @@ Table of Contents
   * [Reproduce ET-BERT](#reproduce-et-bert)
   * [Citation](#citation)
   * [Contact](#contact-information)
-
-<br/>
-
-## Introduction
 
 <br/>
 
