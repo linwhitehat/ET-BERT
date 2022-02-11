@@ -11,11 +11,35 @@ Table of Contents
   * [Introduction](#introduction)
   * [Requirements](#requirements)
   * [Datasets](#datasets)
-  * [Download ET-BERT](#download)
-  * [Using ET-BERT](#using)
-  * [Reproduce ET-BERT](#reproduce)
-  * [Contact information](#contact-information)
+  * [Download ET-BERT](#download-et-bert)
+  * [Using ET-BERT](#using-et-bert)
+  * [Reproduce ET-BERT](#reproduce-et-bert)
   * [Citation](#citation)
+  * [Contact](#contact-information)
+
+<br/>
+
+## Introduction
+
+<br/>
+
+## Requirements
+
+<br/>
+
+## Datasets
+
+<br/>
+
+## Download ET-BERT
+
+<br/>
+
+## Using ET-BERT
+
+<br/>
+
+## Reproduce ET-BERT
 
 <br/>
 
@@ -37,5 +61,7 @@ Xinjie Lin, Gang Xiong, Gaopeng Gou, Zhen Li, Junzheng Shi and Jing Yu. 2022. ET
 }
 ```
 
-## Contact information
+<br/>
+
+## Contact
 Please post a Github issue if you have any questions.
