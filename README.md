@@ -43,7 +43,7 @@ Table of Contents
 <br/>
 
 ## Datasets
-The real-world TLS 1.3 dataset is collected from March to July 2021 on China Science and Technology Network (CSTNET). For privacy considerations, we only release part of the anonymous data (see in [CSTNET-TLS 1.3](CSTNET-TLS%201.3/readme.md)).
+The real-world TLS 1.3 dataset is collected from March to July 2021 on China Science and Technology Network (CSTNET). For privacy considerations, we only release the anonymous data (see in [CSTNET-TLS 1.3](CSTNET-TLS%201.3/readme.md)).
 
 Other datasets we used for comparison experiments are publicly available, see the [paper]() for more details.
 
@@ -55,7 +55,7 @@ If you want to use your own data, please check if the data format is the same as
 <br/>
 
 ## Using ET-BERT
-
+You can now use ET-BERT directly through the pre-trained [model](https://drive.google.com/file/d/1r1yE34dU2W8zSqx1FkB8gCWri4DQWVtE/view?usp=sharing).
 <br/>
 
 ## Reproduce ET-BERT
