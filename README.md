@@ -2,7 +2,7 @@
 
 [![codebeat badge](https://codebeat.co/badges/f75fab90-6d00-44b4-bb42-d19067400243)](https://codebeat.co/projects/github-com-linwhitehat-et-bert-main)
 ![](https://img.shields.io/badge/license-MIT-000000.svg)
-[![arXiv](https://img.shields.io/badge/arXiv-1909.05658-<color>.svg)](https://arxiv.org/abs/1909.05658)
+[![arXiv](https://img.shields.io/badge/arXiv-1909.05658-<color>.svg)](https://arxiv.org)
 
 **The repository of ET-BERT, a network traffic classification model on encrypted traffic.**
 
@@ -63,7 +63,7 @@ You can now use ET-BERT directly through the pre-trained [model](https://drive.g
 <br/>
 
 ## Citation
-#### If you are using the work (e.g. pre-trained model) in ET-BERT for academic work, please cite the [paper](https://arxiv.org/pdf/1909.05658.pdf) published in WWW 2022:
+#### If you are using the work (e.g. pre-trained model) in ET-BERT for academic work, please cite the [paper](https://arxiv.org) published in WWW 2022:
 
 ```
 @inproceedings{Lin2022etbert,
