@@ -47,7 +47,7 @@ The real-world TLS 1.3 dataset is collected from March to July 2021 on China Sci
 
 Other datasets we used for comparison experiments are publicly available, see the [paper]() for more details.
 
-If you want to use your own data, please check if the data format is the same as `datasets/cstnet-tls1.3.zip` and specify the data path in `data_preprocess/`.
+If you want to use your own data, please check if the data format is the same as `datasets/cstnet-tls1.3/` and specify the data path in `data_preprocess/`.
 <br/>
 
 ## Download ET-BERT
