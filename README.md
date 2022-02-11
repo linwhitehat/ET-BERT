@@ -6,7 +6,7 @@
 
 **The repository of ET-BERT, a network traffic classification model on encrypted traffic.**
 
-![The framework of ET-BERT](images/etbert.pdf)
+![The framework of ET-BERT](images/etbert.eps)
 
 <br/>
 
