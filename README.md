@@ -4,13 +4,14 @@
 ![](https://img.shields.io/badge/license-MIT-000000.svg)
 [![arXiv](https://img.shields.io/badge/arXiv-1909.05658-<color>.svg)](https://arxiv.org/abs/1909.05658)
 
-## Introduction
+**The repository of ET-BERT, a network traffic classification model on encrypted traffic.**
+
+![The framework of ET-BERT](images/etbert.pdf)
 
 <br/>
 
 Table of Contents
 =================
-  * [Introduction](#introduction)
   * [Requirements](#requirements)
   * [Datasets](#datasets)
   * [Download ET-BERT](#download-et-bert)
