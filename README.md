@@ -56,7 +56,7 @@ wget -O pretrained_model.bin https://drive.google.com/file/d/1r1yE34dU2W8zSqx1Fk
 
 After obtaining the pre-trained model, ET-BERT could be applied to the spetic task by fine-tuning with labeled network traffic:
 ```
-python3 finetune/run_classifier.py --pretrained_model_path models/pre-trained_model.bin \
+python3 fine-tuning/run_classifier.py --pretrained_model_path models/pre-trained_model.bin \
                                    --vocab_path models/encryptd_vocab.txt \
                                    --train_path datasets/cstnet-tls1.3/packet/train_dataset.tsv \
                                    --dev_path datasets/cstnet-tls1.3/packet/valid_dataset.tsv \
@@ -80,12 +80,27 @@ python3 inference/run_classifier_infer.py --load_model_path models/finetuned_mod
 ## Reproduce ET-BERT
 ### Pre-process
 To reproduce the steps necessary to pre-train ET-BERT on network traffic data, follow the following steps:
+ 1. Run `data_preprocess/main.py` to generate the encrypted traffic corpus or directly use the generated corpus in `corpora/`.
+ 2. Run `preprocess.py` to pre-process the encrypted traffic burst corpus.
+    ```
+       python3 preprocess.py --corpus_path corpora/encrypted_traffic_burst.txt \
+                             --vocab_path models/encryptd_vocab.txt \
+                             --dataset_path dataset.pt --processes_num 8 --target etbert
+    ```
+ 3. Run `datasets/main.py` to generate the data for downstream tasks.
 
 ### Pre-training
-To reproduce the steps necessary to finetune ET-BERT on labeled data, follow the following steps:
+To reproduce the steps necessary to finetune ET-BERT on labeled data, run `pretrain.py` to pre-train.
+```
+   python3 pre-training/pretrain.py --dataset_path dataset.pt --vocab_path models/encryptd_vocab.txt \
+                       --output_model_path models/pre-trained_model.bin \
+                       --world_size 8 --gpu_ranks 0 1 2 3 4 5 6 7 \
+                       --total_steps 500000 --save_checkpoint_steps 10000 --batch_size 32 \
+                       --embedding word_pos_seg --encoder transformer --mask fully_visible --target etbert
+```
 
 ### Fine-tuning on downstream tasks
-
+To see an example of how to use ET-BERT for the encrypted traffic classification tasks, go to the [Using ET-BERT](#using-et-bert) and `run_classifier.py` script in the `fine-tuning` folder.
 <br/>
 
 ## Citation
