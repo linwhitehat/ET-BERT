@@ -20,7 +20,6 @@ Table of Contents
 =================
   * [Requirements](#requirements)
   * [Datasets](#datasets)
-  * [Download ET-BERT](#download-et-bert)
   * [Using ET-BERT](#using-et-bert)
   * [Reproduce ET-BERT](#reproduce-et-bert)
   * [Citation](#citation)
@@ -50,12 +49,22 @@ Other datasets we used for comparison experiments are publicly available, see th
 If you want to use your own data, please check if the data format is the same as `datasets/cstnet-tls1.3/` and specify the data path in `data_preprocess/`.
 <br/>
 
-## Download ET-BERT
-
-<br/>
-
 ## Using ET-BERT
-You can now use ET-BERT directly through the pre-trained [model](https://drive.google.com/file/d/1r1yE34dU2W8zSqx1FkB8gCWri4DQWVtE/view?usp=sharing).
+You can now use ET-BERT directly through the pre-trained [model](https://drive.google.com/file/d/1r1yE34dU2W8zSqx1FkB8gCWri4DQWVtE/view?usp=sharing) or download via:
+```
+wget -O pretrained_model.bin https://drive.google.com/file/d/1r1yE34dU2W8zSqx1FkB8gCWri4DQWVtE/view?usp=sharing
+```
+
+After obtaining the pre-trained model, ET-BERT could be applied to the spetic task by fine-tuning with labeled network traffic:
+```
+python3 finetune/run_classifier.py --vocab_path models/encryptd_vocab.txt \
+--train_path datasets/cstnet-tls1.3/packet/train_dataset.tsv \
+--dev_path datasets/cstnet-tls1.3/packet/valid_dataset.tsv \
+--test_path datasets/cstnet-tls1.3/packet/test_dataset.tsv \
+--epochs_num 10 --batch_size 32 --embedding word_pos_seg \
+--encoder transformer --mask fully_visible \
+--seq_length 128 --learning_rate 2e-5
+```
 <br/>
 
 ## Reproduce ET-BERT
