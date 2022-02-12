@@ -80,7 +80,7 @@ python3 inference/run_classifier_infer.py --load_model_path models/finetuned_mod
 ## Reproduce ET-BERT
 ### Pre-process
 To reproduce the steps necessary to pre-train ET-BERT on network traffic data, follow the following steps:
- 1. Run `data_preprocess/main.py` to generate the encrypted traffic corpus or directly use the generated corpus in `corpora/`.
+ 1. Run `data_preprocess/main.py --pcap_path /dataset/splitcap --dataset_save_path /result --samples 5000 --features payload --dataset_level packet` to generate the encrypted traffic corpus or directly use the generated corpus in `corpora/`.
  2. Run `preprocess.py` to pre-process the encrypted traffic burst corpus.
     ```
        python3 preprocess.py --corpus_path corpora/encrypted_traffic_burst.txt \
