@@ -47,6 +47,7 @@ The real-world TLS 1.3 dataset is collected from March to July 2021 on China Sci
 Other datasets we used for comparison experiments are publicly available, see the [paper]() for more details.
 
 If you want to use your own data, please check if the data format is the same as `datasets/cstnet-tls1.3/` and specify the data path in `data_preprocess/`.
+
 <br/>
 
 ## Using ET-BERT
@@ -57,7 +58,8 @@ wget -O pretrained_model.bin https://drive.google.com/file/d/1r1yE34dU2W8zSqx1Fk
 
 After obtaining the pre-trained model, ET-BERT could be applied to the spetic task by fine-tuning with labeled network traffic:
 ```
-python3 finetune/run_classifier.py --vocab_path models/encryptd_vocab.txt \
+python3 finetune/run_classifier.py --pretrained_model_path models/pre-trained_model.bin \
+--vocab_path models/encryptd_vocab.txt \
 --train_path datasets/cstnet-tls1.3/packet/train_dataset.tsv \
 --dev_path datasets/cstnet-tls1.3/packet/valid_dataset.tsv \
 --test_path datasets/cstnet-tls1.3/packet/test_dataset.tsv \
@@ -65,9 +67,26 @@ python3 finetune/run_classifier.py --vocab_path models/encryptd_vocab.txt \
 --encoder transformer --mask fully_visible \
 --seq_length 128 --learning_rate 2e-5
 ```
+
+The default path of the fine-tuned classifier model is `models/finetuned_model.bin`. Then you can do inference with the fine-tuned model:
+```
+python3 inference/run_classifier_infer.py --load_model_path models/finetuned_model.bin \
+                                          --vocab_path models/encryptd_vocab.txt \
+                                          --test_path datasets/cstnet-tls1.3/packet/nolabel_test_dataset.tsv \
+                                          --prediction_path datasets/cstnet-tls1.3/packet/prediction.tsv \
+                                          --labels_num 120 \
+                                          --embedding word_pos_seg --encoder transformer --mask fully_visible
+```
 <br/>
 
 ## Reproduce ET-BERT
+### Pre-process
+To reproduce the steps necessary to pre-train ET-BERT on network traffic data, follow the following steps:
+
+### Pre-training
+To reproduce the steps necessary to finetune ET-BERT on labeled data, follow the following steps:
+
+### Fine-tuning on downstream tasks
 
 <br/>
 
