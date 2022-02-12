@@ -10,7 +10,7 @@ ET-BERT is a method for learning datagram contextual relationships from encrypte
 
 ![The framework of ET-BERT](images/etbert.png)
 
-The work is introduced in the 31st The Web Conference:
+The work is introduced in the *[31st The Web Conference](https://www2022.thewebconf.org/)*:
 > Xinjie Lin, Gang Xiong, Gaopeng Gou, Zhen Li, Junzheng Shi and Jing Yu. 2022. ET-BERT: A Contextualized Datagram Representation with Pre-training Transformers for Encrypted Traffic Classification. In Proceedings of The Web Conference (WWW) 2022, Lyon, France. Association for Computing Machinery. 
 
 Note: this code is based on [UER-py](https://github.com/dbiir/UER-py). Many thanks to the authors.
@@ -44,9 +44,7 @@ Table of Contents
 ## Datasets
 The real-world TLS 1.3 dataset is collected from March to July 2021 on China Science and Technology Network (CSTNET). For privacy considerations, we only release the anonymous data (see in [CSTNET-TLS 1.3](CSTNET-TLS%201.3/readme.md)).
 
-Other datasets we used for comparison experiments are publicly available, see the [paper]() for more details.
-
-If you want to use your own data, please check if the data format is the same as `datasets/cstnet-tls1.3/` and specify the data path in `data_preprocess/`.
+Other datasets we used for comparison experiments are publicly available, see the [paper]() for more details. If you want to use your own data, please check if the data format is the same as `datasets/cstnet-tls1.3/` and specify the data path in `data_preprocess/`.
 
 <br/>
 
@@ -59,13 +57,13 @@ wget -O pretrained_model.bin https://drive.google.com/file/d/1r1yE34dU2W8zSqx1Fk
 After obtaining the pre-trained model, ET-BERT could be applied to the spetic task by fine-tuning with labeled network traffic:
 ```
 python3 finetune/run_classifier.py --pretrained_model_path models/pre-trained_model.bin \
---vocab_path models/encryptd_vocab.txt \
---train_path datasets/cstnet-tls1.3/packet/train_dataset.tsv \
---dev_path datasets/cstnet-tls1.3/packet/valid_dataset.tsv \
---test_path datasets/cstnet-tls1.3/packet/test_dataset.tsv \
---epochs_num 10 --batch_size 32 --embedding word_pos_seg \
---encoder transformer --mask fully_visible \
---seq_length 128 --learning_rate 2e-5
+                                   --vocab_path models/encryptd_vocab.txt \
+                                   --train_path datasets/cstnet-tls1.3/packet/train_dataset.tsv \
+                                   --dev_path datasets/cstnet-tls1.3/packet/valid_dataset.tsv \
+                                   --test_path datasets/cstnet-tls1.3/packet/test_dataset.tsv \
+                                   --epochs_num 10 --batch_size 32 --embedding word_pos_seg \
+                                   --encoder transformer --mask fully_visible \
+                                   --seq_length 128 --learning_rate 2e-5
 ```
 
 The default path of the fine-tuned classifier model is `models/finetuned_model.bin`. Then you can do inference with the fine-tuned model:
