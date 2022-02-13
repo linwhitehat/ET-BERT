@@ -85,7 +85,7 @@ To reproduce the steps necessary to pre-train ET-BERT on network traffic data, f
     ```
        python3 preprocess.py --corpus_path corpora/encrypted_traffic_burst.txt \
                              --vocab_path models/encryptd_vocab.txt \
-                             --dataset_path dataset.pt --processes_num 8 --target etbert
+                             --dataset_path dataset.pt --processes_num 8 --target bert
     ```
  3. Run `datasets/main.py` to generate the data for downstream tasks.
 
@@ -96,7 +96,7 @@ To reproduce the steps necessary to finetune ET-BERT on labeled data, run `pretr
                        --output_model_path models/pre-trained_model.bin \
                        --world_size 8 --gpu_ranks 0 1 2 3 4 5 6 7 \
                        --total_steps 500000 --save_checkpoint_steps 10000 --batch_size 32 \
-                       --embedding word_pos_seg --encoder transformer --mask fully_visible --target etbert
+                       --embedding word_pos_seg --encoder transformer --mask fully_visible --target bert
 ```
 
 ### Fine-tuning on downstream tasks
