@@ -615,7 +615,7 @@ if __name__ == '__main__':
     # pretrain
     pcap_path = "I:\\pcaps\\"
     # tls 13 downstream
-    #pcap_path, samples, features = "I:\\tls1.3加密流量\\全密13-可用-数据集\\labeled\\", 500, ["payload","length","time","direction","message_type"]
+    #pcap_path, samples, features = "I:\\dataset\\labeled\\", 500, ["payload","length","time","direction","message_type"]
     #X,Y = generation(pcap_path, samples, features, splitcap=False)
     # pretrain data
     pretrain_dataset_generation(pcap_path)
