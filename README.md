@@ -32,8 +32,11 @@ Table of Contents
 * six >= 1.12.0
 * scapy == 2.4.4
 * numpy == 1.19.2
+* shutil, random, json, pickle, binascii, flowcontainer
 * argparse
 * packaging
+* wireshark
+* [SplitCap](https://www.netresec.com/?page=SplitCap)
 * [scikit-learn](https://scikit-learn.org/stable/)
 * For the mixed precision training you will need apex from NVIDIA
 * For the pre-trained model conversion (related with TensorFlow) you will need TensorFlow
@@ -101,6 +104,8 @@ To reproduce the steps necessary to finetune ET-BERT on labeled data, run `pretr
 
 ### Fine-tuning on downstream tasks
 To see an example of how to use ET-BERT for the encrypted traffic classification tasks, go to the [Using ET-BERT](#using-et-bert) and `run_classifier.py` script in the `fine-tuning` folder.
+
+Note: you'll need to change the path in programes.
 <br/>
 
 ## Citation
