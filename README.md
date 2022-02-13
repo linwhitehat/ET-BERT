@@ -113,7 +113,7 @@ Note: you'll need to change the path in programes.
 
 ```
 @inproceedings{Lin2022etbert,
-  author        = {Lin, Xinjie and Xiong, Gang and Gou, Gaopeng and Li, Zhen and Shi, Junzheng and Yu, Jing.},
+  author        = {Lin, Xinjie and Xiong, Gang and Gou, Gaopeng and Li, Zhen and Shi, Junzheng and Yu, Jing},
   title         = {ET-BERT: A Contextualized Datagram Representation with Pre-training Transformers for Encrypted Traffic Classification},
   year          = {2022},
   month         = apr,
