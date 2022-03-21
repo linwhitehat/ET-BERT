@@ -116,11 +116,7 @@ Note: you'll need to change the path in programes.
   author        = {Lin, Xinjie and Xiong, Gang and Gou, Gaopeng and Li, Zhen and Shi, Junzheng and Yu, Jing},
   title         = {ET-BERT: A Contextualized Datagram Representation with Pre-training Transformers for Encrypted Traffic Classification},
   year          = {2022},
-  month         = apr,
-  isbn          = {9781450390965},
-  publisher     = {Association for Computing Machinery},
-  booktitle     = {Proceedings of The Web Conference 2022},
-  numpages      = {10},
+  journal     = {arXiv preprint arXiv:2202.06335},
 }
 ```
 
