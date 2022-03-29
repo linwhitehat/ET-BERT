@@ -124,7 +124,7 @@ def build_BPE():
 
     # And then train
     trainer = trainers.WordPieceTrainer(vocab_size=65536, min_frequency=2)
-    tokenizer.train([word_dir+word_name, word_dir+word_name_iscx], trainer=trainer)
+    tokenizer.train([word_dir+word_name, word_dir+word_name], trainer=trainer)
 
     # And Save it
     tokenizer.save("wordpiece.tokenizer.json", pretty=True)
