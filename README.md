@@ -57,7 +57,7 @@ You can now use ET-BERT directly through the pre-trained [model](https://drive.g
 wget -O pretrained_model.bin https://drive.google.com/file/d/1r1yE34dU2W8zSqx1FkB8gCWri4DQWVtE/view?usp=sharing
 ```
 
-After obtaining the pre-trained model, ET-BERT could be applied to the spetic task by fine-tuning with labeled network traffic:
+After obtaining the pre-trained model, ET-BERT could be applied to the spetic task by fine-tuning at packet-level with labeled network traffic:
 ```
 python3 fine-tuning/run_classifier.py --pretrained_model_path models/pre-trained_model.bin \
                                    --vocab_path models/encryptd_vocab.txt \
