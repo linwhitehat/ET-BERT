@@ -15,7 +15,8 @@ from uer.utils.config import load_hyperparam
 from uer.utils.seed import set_seed
 from uer.model_saver import save_model
 from uer.opts import finetune_opts
-
+import tqdm
+import numpy as np
 
 class Classifier(nn.Module):
     def __init__(self, args):
@@ -36,27 +37,11 @@ class Classifier(nn.Module):
             tgt: [batch_size]
             seg: [batch_size x seq_length]
         """
-        ### src,seg [bz x 640] -> [bz x 5 x 128], set seq_length = 128
-        batch_size_num = src.shape[0]
-        seq_length = src.shape[1]//5
-        #src = src.view(batch_size_num,5,seq_length)
         # Embedding.
-        emb_data = self.embedding(src, seg)
-        # Encoder.
-        output = torch.Tensor(0)
-        for each_batch_size in range(emb_data.size(0)):
-            emb = emb_data[each_batch_size]
-            seg_data = seg[each_batch_size]
-            output_emb = self.encoder(emb, seg_data)
-            ### output [5 x seq_length x 768] -> [5 x 1 x 768]
-            output_data = output_emb[:,:1,:]
-            ### delete dim of seq_length, expand dim of batch
-            cls_output = output_data.squeeze(1).unsqueeze(0)
-            if output.size(0) == 0:
-                output = cls_output
-            else:
-                output = torch.cat((output,cls_output),0)
-        
+        emb = self.embedding(src, seg)
+        # Encoder. output输出是[bz,seq_len,768]，[cls]的embedding应取[bz,1,768]
+        output = self.encoder(emb, seg)
+        temp_output = output
         # Target.
         if self.pooling == "mean":
             output = torch.mean(output, dim=1)
@@ -77,6 +62,7 @@ class Classifier(nn.Module):
             return loss, logits
         else:
             return None, logits
+            #return temp_output, logits
 
 
 def count_labels_num(path):
@@ -96,7 +82,7 @@ def count_labels_num(path):
 def load_or_initialize_parameters(args, model):
     if args.pretrained_model_path is not None:
         # Initialize with pretrained model.
-        model.load_state_dict(torch.load(args.pretrained_model_path, map_location='cpu'), strict=False)
+        model.load_state_dict(torch.load(args.pretrained_model_path, map_location={'cuda:1':'cuda:0', 'cuda:2':'cuda:0', 'cuda:3':'cuda:0'}), strict=False)
     else:
         # Initialize with normal distribution.
         for n, p in list(model.named_parameters()):
@@ -149,64 +135,37 @@ def batch_loader(batch_size, src, tgt, seg, soft_tgt=None):
 
 def read_dataset(args, path):
     dataset, columns = [], {}
-    
     with open(path, mode="r", encoding="utf-8") as f:
-        try:
-            for line_id, line in enumerate(f):
-                if line_id == 0:
-                    for i, column_name in enumerate(line.strip().split("\t")):
-                        columns[column_name] = i
-                    continue
-                line = line[:-1].split("\t")
-                tgt = int(line[columns["label"]])
-                if args.soft_targets and "logits" in columns.keys():
-                    soft_tgt = [float(value) for value in line[columns["logits"]].split(" ")]
-            
-                src_dataset,seg_dataset = [], [] # not source code
-                if "text_b" not in columns:  # Sentence classification.
-                    text_a = line[columns["text_a"]]
-                    ### source code as up
-                    text_a_list = text_a.split(" | ")
-                    if text_a_list:
-                        for text_a_index in range(len(text_a_list)):
-                            src = args.tokenizer.convert_tokens_to_ids([CLS_TOKEN] + args.tokenizer.tokenize(text_a_list[text_a_index]))
-                            src_dataset.append(src)
-                            seg_dataset.append([1] * len(src))
-                    else:
-                        print("BBBB ",text_a_list," BBBBBBBBBBBBB",path)
-                ### source codes as below
-                #src = args.tokenizer.convert_tokens_to_ids([CLS_TOKEN] + args.tokenizer.tokenize(text_a))
-                #seg = [1] * len(src)
-                else:  # Sentence-pair classification.
-                    text_a, text_b = line[columns["text_a"]], line[columns["text_b"]]
-                    src_a = args.tokenizer.convert_tokens_to_ids([CLS_TOKEN] + args.tokenizer.tokenize(text_a) + [SEP_TOKEN])
-                    src_b = args.tokenizer.convert_tokens_to_ids(args.tokenizer.tokenize(text_b) + [SEP_TOKEN])
-                    src = src_a + src_b
-                    seg = [1] * len(src_a) + [2] * len(src_b)
+        for line_id, line in enumerate(f):
+            if line_id == 0:
+                for i, column_name in enumerate(line.strip().split("\t")):
+                    columns[column_name] = i
+                continue
+            line = line[:-1].split("\t")
+            tgt = int(line[columns["label"]])
+            if args.soft_targets and "logits" in columns.keys():
+                soft_tgt = [float(value) for value in line[columns["logits"]].split(" ")]
+            if "text_b" not in columns:  # Sentence classification.
+                text_a = line[columns["text_a"]]
+                src = args.tokenizer.convert_tokens_to_ids([CLS_TOKEN] + args.tokenizer.tokenize(text_a))
+                seg = [1] * len(src)
+            else:  # Sentence-pair classification.
+                text_a, text_b = line[columns["text_a"]], line[columns["text_b"]]
+                src_a = args.tokenizer.convert_tokens_to_ids([CLS_TOKEN] + args.tokenizer.tokenize(text_a) + [SEP_TOKEN])
+                src_b = args.tokenizer.convert_tokens_to_ids(args.tokenizer.tokenize(text_b) + [SEP_TOKEN])
+                src = src_a + src_b
+                seg = [1] * len(src_a) + [2] * len(src_b)
 
-                if src_dataset:
-                    for index in range(len(src_dataset)):
-                        if len(src_dataset[index]) > args.seq_length:
-                            src_dataset[index] = src_dataset[index][: args.seq_length]
-                            seg_dataset[index] = seg_dataset[index][: args.seq_length]
-                        while len(src_dataset[index]) < args.seq_length:
-                            src_dataset[index].append(0)
-                            seg_dataset[index].append(0)
-                else:
-                    print("BBBB ",text_a_list," BBBBBBBBBBBBB",path)
-                # src_dataset,seg_dataset [5 x 128] -> src,seg [640]
-                #src = [data for data_list in src_dataset for data in data_list]
-                #seg = [data for data_list in seg_dataset for data in data_list]
-                src = src_dataset # src [5]
-                seg = seg_dataset
-
-                if args.soft_targets and "logits" in columns.keys():
-                    dataset.append((src, tgt, seg, soft_tgt))
-                else:
-                    dataset.append((src, tgt, seg))
-        except Exception as e:
-            print(path)
-            print(e)
+            if len(src) > args.seq_length:
+                src = src[: args.seq_length] # 截取文本的前512
+                seg = seg[: args.seq_length]
+            while len(src) < args.seq_length:
+                src.append(0)
+                seg.append(0)
+            if args.soft_targets and "logits" in columns.keys():
+                dataset.append((src, tgt, seg, soft_tgt))
+            else:
+                dataset.append((src, tgt, seg))
 
     return dataset
 
@@ -264,11 +223,19 @@ def evaluate(args, dataset, print_confusion_matrix=False):
     if print_confusion_matrix:
         print("Confusion matrix:")
         print(confusion)
+        cf_array = confusion.numpy()
+        with open("/data2/lxj/pre-train/results/confusion_matrix",'w') as f:
+            for cf_a in cf_array:
+                f.write(str(cf_a)+'\n')
         print("Report precision, recall, and f1:")
+        eps = 1e-9
         for i in range(confusion.size()[0]):
-            p = confusion[i, i].item() / confusion[i, :].sum().item()
-            r = confusion[i, i].item() / confusion[:, i].sum().item()
-            f1 = 2 * p * r / (p + r)
+            p = confusion[i, i].item() / (confusion[i, :].sum().item() + eps)
+            r = confusion[i, i].item() / (confusion[:, i].sum().item() + eps)
+            if (p + r) == 0:
+                f1 = 0
+            else:
+                f1 = 2 * p * r / (p + r)
             print("Label {}: {:.3f}, {:.3f}, {:.3f}".format(i, p, r, f1))
 
     print("Acc. (Correct/Total): {:.4f} ({}/{}) ".format(correct / len(dataset), correct, len(dataset)))
@@ -294,7 +261,7 @@ def main():
                         help="Train model with logits.")
     parser.add_argument("--soft_alpha", type=float, default=0.5,
                         help="Weight of the soft targets loss.")
-
+    
     args = parser.parse_args()
 
     # Load the hyperparameters from the config file.
@@ -314,21 +281,18 @@ def main():
     # Load or initialize parameters.
     load_or_initialize_parameters(args, model)
 
-    #args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    args.device = torch.device("cpu")
+    args.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = model.to(args.device)
 
     # Training phase.
-    trainset = read_dataset(args, args.train_path)
-
+    trainset = read_dataset(args, args.train_path) # trainset是一个list,包含[src,tgt,seg]，src是样本内容，tgt是标签，seg是用于标记不同样本的符号（当前样本是1，则补0和其他样本为0）
     random.shuffle(trainset)
     instances_num = len(trainset)
     batch_size = args.batch_size
-
+    
     src = torch.LongTensor([example[0] for example in trainset])
     tgt = torch.LongTensor([example[1] for example in trainset])
     seg = torch.LongTensor([example[2] for example in trainset])
-
     if args.soft_targets:
         soft_tgt = torch.FloatTensor([example[3] for example in trainset])
     else:
@@ -358,7 +322,7 @@ def main():
 
     print("Start training.")
 
-    for epoch in range(1, args.epochs_num + 1):
+    for epoch in tqdm.tqdm(range(1, args.epochs_num + 1)):
         model.train()
         for i, (src_batch, tgt_batch, seg_batch, soft_tgt_batch) in enumerate(batch_loader(batch_size, src, tgt, seg, soft_tgt)):
             loss = train_model(args, model, optimizer, scheduler, src_batch, tgt_batch, seg_batch, soft_tgt_batch)
@@ -376,7 +340,7 @@ def main():
     if args.test_path is not None:
         print("Test set evaluation.")
         if torch.cuda.device_count() > 1:
-            model.module.load_state_dict(torch.load(args.output_model_path,map_location='cuda:2'))
+            model.module.load_state_dict(torch.load(args.output_model_path))
         else:
             model.load_state_dict(torch.load(args.output_model_path))
         evaluate(args, read_dataset(args, args.test_path), True)
