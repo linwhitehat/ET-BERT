@@ -168,25 +168,20 @@ class BertTrainer(Trainer):
         self.total_correct_sp = 0.0
         self.total_instances = 0.0
 
-        self.total_loss_tov = 0.0
-        self.total_correct_tov = 0.0
-
         self.total_loss_mlm = 0.0
         self.total_correct_mlm = 0.0
         self.total_denominator = 0.0
 
     def forward_propagation(self, batch, model):
-        src, tgt_mlm, tgt_sp, seg, tgt_tov = batch
-        loss_info = model(src, (tgt_mlm, tgt_sp, tgt_tov), seg)
-        loss_mlm, loss_sp, loss_tov, correct_mlm, correct_sp, correct_tov, denominator = loss_info
-        loss = loss_mlm + loss_sp + loss_tov
+        src, tgt_mlm, tgt_sp, seg = batch
+        loss_info = model(src, (tgt_mlm, tgt_sp), seg)
+        loss_mlm, loss_sp, correct_mlm, correct_sp, denominator = loss_info
+        loss = loss_mlm/10 + loss_sp
         self.total_loss += loss.item()
         self.total_loss_mlm += loss_mlm.item()
         self.total_loss_sp += loss_sp.item()
-        self.total_loss_tov += loss_tov.item()
         self.total_correct_mlm += correct_mlm.item()
         self.total_correct_sp += correct_sp.item()
-        self.total_correct_tov += correct_tov.item()
         self.total_denominator += denominator.item()
         self.total_instances += src.size(0)
         loss = loss / self.accumulation_steps
@@ -203,25 +198,20 @@ class BertTrainer(Trainer):
               "| loss {:7.2f}"
               "| loss_mlm: {:3.3f}"
               "| loss_sp: {:3.3f}"
-              "| loss_tov: {:3.3f}"
               "| acc_mlm: {:3.3f}"
-              "| acc_sp: {:3.3f}"
-              "| acc_tov: {:3.3f}".format(
+              "| acc_sp: {:3.3f}".format(
             self.current_step,
             self.total_steps,
             done_tokens / (time.time() - self.start_time),
             self.total_loss / self.report_steps,
             self.total_loss_mlm / self.report_steps,
             self.total_loss_sp / self.report_steps,
-            self.total_loss_tov / self.report_steps,
             self.total_correct_mlm / self.total_denominator,
-            self.total_correct_sp / self.total_instances,
-            self.total_correct_tov / self.total_instances))
+            self.total_correct_sp / self.total_instances))
 
-        self.total_loss, self.total_loss_mlm, self.total_loss_sp, self.total_loss_tov = 0.0, 0.0, 0.0, 0.0
+        self.total_loss, self.total_loss_mlm, self.total_loss_sp = 0.0, 0.0, 0.0
         self.total_correct_mlm, self.total_denominator = 0.0, 0.0
         self.total_correct_sp, self.total_instances = 0.0, 0.0
-        self.total_correct_tov = 0.0
 
 
 class AlbertTrainer(BertTrainer):
