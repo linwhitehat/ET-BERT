@@ -38,7 +38,7 @@ def dataset_extract(model):
             
             x_payload_train, x_payload_test, x_payload_valid,\
             y_train, y_test, y_valid = \
-                np.load(dataset_save_path + "dataset\\x_payload_train.npy",allow_pickle=True), np.load(dataset_save_path + "dataset\\x_payload_test.npy",allow_pickle=True), np.load(dataset_save_path + "dataset\\x_payload_valid.npy",allow_pickle=True),\
+                np.load(dataset_save_path + "dataset\\x_datagram_train.npy",allow_pickle=True), np.load(dataset_save_path + "dataset\\x_datagram_test.npy",allow_pickle=True), np.load(dataset_save_path + "dataset\\x_datagram_valid.npy",allow_pickle=True),\
                 np.load(dataset_save_path + "dataset\\y_train.npy",allow_pickle=True), np.load(dataset_save_path + "dataset\\y_test.npy",allow_pickle=True), np.load(dataset_save_path + "dataset\\y_valid.npy",allow_pickle=True)
             
             X_dataset, Y_dataset = models_deal(model, X_dataset, Y_dataset,
@@ -114,11 +114,11 @@ def dataset_extract(model):
     if not os.path.exists(dataset_save_path+"dataset\\"):
         os.mkdir(dataset_save_path+"dataset\\")
 
-    output_x_payload_train = os.path.join(dataset_save_path + "dataset\\", 'x_payload_train.npy')
+    output_x_payload_train = os.path.join(dataset_save_path + "dataset\\", 'x_datagram_train.npy')
 
-    output_x_payload_test = os.path.join(dataset_save_path + "dataset\\", 'x_payload_test.npy')
+    output_x_payload_test = os.path.join(dataset_save_path + "dataset\\", 'x_datagram_test.npy')
 
-    output_x_payload_valid = os.path.join(dataset_save_path + "dataset\\", 'x_payload_valid.npy')
+    output_x_payload_valid = os.path.join(dataset_save_path + "dataset\\", 'x_datagram_valid.npy')
 
     output_y_train = os.path.join(dataset_save_path+"dataset\\",'y_train.npy')
     output_y_test = os.path.join(dataset_save_path + "dataset\\", 'y_test.npy')
@@ -150,7 +150,7 @@ def models_deal(model, X_dataset, Y_dataset, x_payload_train, x_payload_test, x_
             write_dataset_tsv(x_payload_train, y_train, save_dir, "train")
             write_dataset_tsv(x_payload_test, y_test, save_dir, "test")
             write_dataset_tsv(x_payload_valid, y_valid, save_dir, "valid")
-            print("finish generating pre-train's payload dataset.\nPlease check in %s" % save_dir)
+            print("finish generating pre-train's datagram dataset.\nPlease check in %s" % save_dir)
             unlabel_data(dataset_dir + "test_dataset.tsv")
 
         X_dataset[model[index]] = {"train": [], "valid": [], "test": []}
