@@ -90,7 +90,7 @@ To reproduce the steps necessary to pre-train ET-BERT on network traffic data, f
                              --vocab_path models/encryptd_vocab.txt \
                              --dataset_path dataset.pt --processes_num 8 --target bert
     ```
- 3. Run `datasets/main.py` to generate the data for downstream tasks if there is a dataset in pcap format that needs to be processed. This process includes two steps. The first is to split pcap files by setting `splitcap=True` in `datasets/main.py:54`  and save as `npy` datasets. Then the second is to generate the fine-tuning data.
+ 3. Run `datasets/main.py` to generate the data for downstream tasks if there is a dataset in pcap format that needs to be processed. This process includes two steps. The first is to split pcap files by setting `splitcap=True` in `datasets/main.py:54`  and save as `npy` datasets. Then the second is to generate the fine-tuning data. If you use the shared datasets, then you need to create a folder under the `dataset_save_path` named `dataset` and copy the datasets here.
 
 ### Pre-training
 To reproduce the steps necessary to finetune ET-BERT on labeled data, run `pretrain.py` to pre-train.
