@@ -319,7 +319,7 @@ def get_feature_flow(label_pcap, payload_len, payload_pac):
 
     return feature_data
 
-def generation(pcap_path, samples, features, splitcap = False, payload_length = 68, payload_packet = 5, dataset_save_path = "I:\\ex_results\\", dataset_level = "flow"):
+def generation(pcap_path, samples, features, splitcap = False, payload_length = 76, payload_packet = 5, dataset_save_path = "I:\\ex_results\\", dataset_level = "flow"):
     if os.path.exists(dataset_save_path + "dataset.json"):
         print("the pcap file of %s is finished generating."%pcap_path)
         
