@@ -47,7 +47,7 @@ Table of Contents
 ## Datasets
 The real-world TLS 1.3 dataset is collected from March to July 2021 on China Science and Technology Network (CSTNET). For privacy considerations, we only release the anonymous data (see in [CSTNET-TLS 1.3](CSTNET-TLS%201.3/readme.md)).
 
-Other datasets we used for comparison experiments are publicly available, see the [paper](https://arxiv.org/abs/2202.06335) for more details. If you want to use your own data, please check if the data format is the same as `datasets/cstnet-tls1.3/` and specify the data path in `data_preprocess/`.
+Other datasets we used for comparison experiments are publicly available, see the [paper](https://arxiv.org/abs/2202.06335) for more details. If you want to use your own data, please check if the data format is the same as `datasets/cstnet-tls1.3/` and specify the data path in `data_process/`.
 
 <br/>
 
@@ -83,14 +83,14 @@ python3 inference/run_classifier_infer.py --load_model_path models/finetuned_mod
 ## Reproduce ET-BERT
 ### Pre-process
 To reproduce the steps necessary to pre-train ET-BERT on network traffic data, follow the following steps:
- 1. Run `data_preprocess/main.py` to generate the encrypted traffic corpus or directly use the generated corpus in `corpora/`. Note you'll need to change the file paths and some configures at the top of the file.
- 2. Run `preprocess.py` to pre-process the encrypted traffic burst corpus.
+ 1. Run `vocab_process/main.py` to generate the encrypted traffic corpus or directly use the generated corpus in `corpora/`. Note you'll need to change the file paths and some configures at the top of the file.
+ 2. Run `main/preprocess.py` to pre-process the encrypted traffic burst corpus.
     ```
        python3 preprocess.py --corpus_path corpora/encrypted_traffic_burst.txt \
                              --vocab_path models/encryptd_vocab.txt \
                              --dataset_path dataset.pt --processes_num 8 --target bert
     ```
- 3. Run `datasets/main.py` to generate the data for downstream tasks if there is a dataset in pcap format that needs to be processed. This process includes two steps. The first is to split pcap files by setting `splitcap=True` in `datasets/main.py:54`  and save as `npy` datasets. Then the second is to generate the fine-tuning data. If you use the shared datasets, then you need to create a folder under the `dataset_save_path` named `dataset` and copy the datasets here.
+ 3. Run `data_process/main.py` to generate the data for downstream tasks if there is a dataset in pcap format that needs to be processed. This process includes two steps. The first is to split pcap files by setting `splitcap=True` in `datasets/main.py:54`  and save as `npy` datasets. Then the second is to generate the fine-tuning data. If you use the shared datasets, then you need to create a folder under the `dataset_save_path` named `dataset` and copy the datasets here.
 
 ### Pre-training
 To reproduce the steps necessary to finetune ET-BERT on labeled data, run `pretrain.py` to pre-train.
