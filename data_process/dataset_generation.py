@@ -457,8 +457,8 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
                     "samples": 0,
                     "payload": {}
                 }
-            if splitcap:
-                continue
+        if splitcap:
+            continue
 
         r_files = random.sample(target_all_files, samples[label_count])
         label_count += 1
