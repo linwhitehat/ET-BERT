@@ -148,6 +148,8 @@ def get_feature_packet(label_pcap,payload_len):
             
             packet_string = data.decode()
             
+            new_packet_string = packet_string[76:]
+            
             packet_data_string += bigram_generation(new_packet_string, packet_len=payload_len, flag = True)
 
     feature_data.append(packet_data_string)
@@ -302,14 +304,13 @@ def get_feature_flow(label_pcap, payload_len, payload_pac):
         if packet_count == payload_pac:
             packet_data = packet.copy()
             data = (binascii.hexlify(bytes(packet_data)))
-            packet_string = data.decode()
-            
+            packet_string = data.decode()[76:]
             flow_data_string += bigram_generation(packet_string, packet_len=payload_len, flag = True)
             break
         else:
             packet_data = packet.copy()
             data = (binascii.hexlify(bytes(packet_data)))
-            packet_string = data.decode()
+            packet_string = data.decode()[76:]
             flow_data_string += bigram_generation(packet_string, packet_len=payload_len, flag = False)
     feature_data.append(flow_data_string)
     feature_data.append(packet_length[0])
@@ -319,7 +320,7 @@ def get_feature_flow(label_pcap, payload_len, payload_pac):
 
     return feature_data
 
-def generation(pcap_path, samples, features, splitcap = False, payload_length = 76, payload_packet = 5, dataset_save_path = "I:\\ex_results\\", dataset_level = "flow"):
+def generation(pcap_path, samples, features, splitcap = False, payload_length = 128, payload_packet = 5, dataset_save_path = "I:\\ex_results\\", dataset_level = "flow"):
     if os.path.exists(dataset_save_path + "dataset.json"):
         print("the pcap file of %s is finished generating."%pcap_path)
         
