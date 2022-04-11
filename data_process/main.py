@@ -212,9 +212,9 @@ def count_label_number(samples):
     return new_samples
 
 if __name__ == '__main__':、
-    open_dataset = 0
+    open_dataset_not_pcap = 0
     
-    if open_dataset:
+    if open_dataset_not_pcap:
         #open_dataset_deal.dataset_file2dir(pcap_path)
         for p,d,f in os.walk(pcap_path):
             for file in f:
