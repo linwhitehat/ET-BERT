@@ -61,7 +61,7 @@ def preprocess(pcap_dir):
                     word_packet = p.copy()
                     words = (binascii.hexlify(bytes(word_packet)))
                     
-                    words_string = words.decode()[68:]
+                    words_string = words.decode()[76:]
                     # print(words_string)
                     length = len(words_string)
                     if length < 10:
