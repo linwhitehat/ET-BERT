@@ -67,17 +67,17 @@ def cut(obj, sec):
         result = [obj[i:i+sec+remanent_count] for i in range(0,len(obj),sec+remanent_count)]
     return result
 
-def bigram_generation(packet_string, packet_len = 64, flag=True):
+def bigram_generation(packet_datagram, packet_len = 64, flag=True):
     result = ''
-    sentence = cut(packet_string,1)
+    generated_datagram = cut(packet_datagram,1)
     token_count = 0
-    for sub_string_index in range(len(sentence)):
-        if sub_string_index != (len(sentence) - 1):
+    for sub_string_index in range(len(generated_datagram)):
+        if sub_string_index != (len(generated_datagram) - 1):
             token_count += 1
             if token_count > packet_len:
                 break
             else:
-                merge_word_bigram = sentence[sub_string_index] + sentence[sub_string_index + 1]
+                merge_word_bigram = generated_datagram[sub_string_index] + generated_datagram[sub_string_index + 1]
         else:
             break
         result += merge_word_bigram
