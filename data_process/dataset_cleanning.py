@@ -83,40 +83,6 @@ def deal_finetuning(excluding_label):
         unlabel_data(save_dataset_path+"test_dataset.tsv")
     return 0
 
-def deal_test(excluding_label):
-    dataset_path = "I:\\unused_IP_samples\\encrypted_dataset\\"
-    test_data_path = dataset_path + "test_dataset.tsv"
-    with open(test_data_path,'r') as f:
-        test_data = f.read().split('\n')[1:]
-    for label_number in excluding_label:
-        test_pop_index = []
-        for index in range(len(test_data)):
-            if str(label_number)+'\t' in test_data[index]:
-                test_pop_index.append(index)
-        for counter,index in enumerate(test_pop_index):
-            index = index - counter
-            test_data.pop(index)
-    label_number = 120
-    count = 0
-    while label_number > 105:
-        for index in range(len(test_data)):
-            if str(label_number) + '\t' in test_data[index]:
-                new_data = test_data[index].replace(str(label_number)+'\t', str(excluding_label[count])+'\t')
-                test_data[index] = new_data
-        label_number -= 1
-        count += 1
-        
-    with open(dataset_path + "new_106\\"+"test_dataset.tsv",'w') as f:
-        f.write("label\ttext_a\n")
-        for data in test_data:
-            f.write(data+'\n')
-            
-    deal_result = input("please delete the last blank line in %s and input '1'" % (dataset_path + "new_106\\test_dataset.tsv"))
-    if deal_result == '1':
-        unlabel_data(dataset_path + "new_106\\test_dataset.tsv")
-    return 0
-
 if __name__ == '__main__':
     excluding_laebl = deal_label()
     deal_finetuning(excluding_laebl)
-    #deal_test(excluding_laebl)
