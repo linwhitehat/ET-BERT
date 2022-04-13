@@ -7,9 +7,9 @@ import json
 import random
 
 def combine_data_json():
-    target_path = "F:\\LEFTT-2021\\binary\\"
-    target_file1 = target_path + "ssr_header_payload_2_dataset.json"
-    target_file2 = target_path + "vmess_header_payload_dataset.json"
+    target_path = "F:\\dataset\\"
+    target_file1 = target_path + "dataset_1.json"
+    target_file2 = target_path + "dataset_2.json"
     save_file = target_path + "dataset.json"
 
     result_samples = {'0':{'payload':{}}, '1':{'payload':{}}}
@@ -46,43 +46,6 @@ def combine_data_json():
 
     with open(save_file, 'w', encoding='utf-8') as f:
         json.dump(combined_result,f,indent=4,ensure_ascii=False)
-    return 0
-
-def copy_dir_tls13_data():
-    label_name_list = ['163.com', '51.la', '51cto.com', 'acm.org', 'adobe.com', 'alibaba.com', 'alicdn.com', 'alipay.com', 'amap.com', 'amazonaws.com', 'ampproject.org', 'apple.com', 'arxiv.org', 'asus.com', 'atlassian.net', 'azureedge.net', 'baidu.com', 'bilibili.com', 'biligame.com', 'booking.com', 'chia.net', 'chinatax.gov.cn', 'cisco.com', 'cloudflare.com', 'cloudfront.net', 'cnblogs.com', 'codepen.io', 'crazyegg.com', 'criteo.com', 'ctrip.com', 'dailymotion.com', 'deepl.com', 'digitaloceanspaces.com', 'duckduckgo.com', 'eastday.com', 'eastmoney.com', 'elsevier.com', 'facebook.com', 'feishu.cn', 'ggpht.com', 'github.com', 'gitlab.com', 'gmail.com', 'goat.com', 'google.com', 'grammarly.com', 'gravatar.com', 'guancha.cn', 'huanqiu.com', 'huawei.com', 'hubspot.com', 'huya.com', 'ibm.com', 'icloud.com', 'ieee.org', 'instagram.com', 'iqiyi.com', 'jb51.net', 'jd.com', 'kugou.com', 'leetcode-cn.com', 'media.net', 'mi.com', 'microsoft.com', 'mozilla.org', 'msn.com', 'naver.com', 'netflix.com', 'nike.com', 'notion.so', 'nvidia.com', 'office.net', 'onlinedown.net', 'opera.com', 'oracle.com', 'outbrain.com', 'overleaf.com', 'paypal.com', 'pinduoduo.com', 'python.org', 'qcloud.com', 'qq.com', 'researchgate.net', 'runoob.com', 'sciencedirect.com', 'semanticscholar.org', 'sina.com.cn', 'smzdm.com', 'snapchat.com', 'sohu.com', 'spring.io', 'springer.com', 'squarespace.com', 'statcounter.com', 'steampowered.com', 't.co', 'taboola.com', 'teads.tv', 'thepaper.cn', 'tiktok.com', 'toutiao.com', 'twimg.com', 'twitter.com', 'unity3d.com', 'v2ex.com', 'vivo.com.cn', 'vk.com', 'vmware.com', 'walmart.com', 'weibo.com', 'wikimedia.org', 'wikipedia.org', 'wp.com', 'xiaomi.com', 'ximalaya.com', 'yahoo.com', 'yandex.ru', 'youtube.com', 'yy.com', 'zhihu.com']
-    
-    root_path = "I:\\cstnet-tls1.3\\labeled\\"
-    
-    target_path = "K:\\cstnet-tls1.3\\120\\"
-    
-    for label_index in range(len(label_name_list)):
-        src_dir = root_path + label_name_list[label_index]
-        dst_dir  = target_path + label_name_list[label_index]
-        print("copying %s from %s to %s .." % (label_name_list[label_index], src_dir, dst_dir))
-        shutil.copytree(src=src_dir, dst=dst_dir)
-    return 0
-
-def copy_record_tls13_data():
-    target_path = "K:\\cstnet-tls1.3\\"
-    source_path_file = "I:\\cstnet-tls1.3\\picked_file_record"
-    with open(source_path_file,"r") as f:
-        records = f.read().split("\n")
-    temp_label = ""
-    count = 0
-    for record_index in range(len(records)):
-        src_file = records[record_index]
-        label = src_file.split("\\")[6]
-        
-        if temp_label != label:
-            temp_label = label
-            count = 1
-        else:
-            count += 1
-        #file = src_file.split("\\")[-1]
-        dst_file = target_path + label + "\\" + str(count) + ".pcap"
-        if not os.path.exists(target_path + label):
-            os.mkdir(target_path + label)
-        shutil.copy(src=src_file,dst=dst_file)
     return 0
 
 def basic_process_1(y_dict,x_dict):
