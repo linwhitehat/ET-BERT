@@ -461,6 +461,7 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
         if splitcap:
             continue
 
+        target_all_files = [x[0] + "\\" + y for x in [(p, f) for p, d, f in os.walk(session_pcap_path[key])] for y in x[1]]
         r_files = random.sample(target_all_files, samples[label_count])
         label_count += 1
         for r_f in r_files:
