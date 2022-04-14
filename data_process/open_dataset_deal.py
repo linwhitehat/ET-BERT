@@ -32,8 +32,7 @@ def dataset_file2dir(file_path):
             shutil.move(parent+"\\"+file,parent+"\\"+label_name+"\\")
     return 0
 
-def file_2_pcap(source_file,target_file):rn:
-    '''
+def file_2_pcap(source_file,target_file):
     cmd = "I:\\tshark.exe -F pcap -r %s -w %s"
     command = cmd % (source_file,target_file)
     os.system(command)
