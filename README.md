@@ -37,7 +37,7 @@ Table of Contents
 * shutil, random, json, pickle, binascii, flowcontainer
 * argparse
 * packaging
-* wireshark
+* tshark
 * [SplitCap](https://www.netresec.com/?page=SplitCap)
 * [scikit-learn](https://scikit-learn.org/stable/)
 * For the mixed precision training you will need apex from NVIDIA
