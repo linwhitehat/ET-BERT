@@ -28,6 +28,8 @@ Table of Contents
 
 ## Requirements
 * Python >= 3.6
+* CUDA: 11.4
+* GPU: Tesla V100S
 * torch >= 1.1
 * six >= 1.12.0
 * scapy == 2.4.4
