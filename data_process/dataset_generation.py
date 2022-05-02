@@ -305,13 +305,13 @@ def get_feature_flow(label_pcap, payload_len, payload_pac):
             packet_data = packet.copy()
             data = (binascii.hexlify(bytes(packet_data)))
             packet_string = data.decode()[76:]
-            flow_data_string += bigram_generation(packet_string[76:], packet_len=payload_len, flag = True)
+            flow_data_string += bigram_generation(packet_string, packet_len=payload_len, flag = True)
             break
         else:
             packet_data = packet.copy()
             data = (binascii.hexlify(bytes(packet_data)))
             packet_string = data.decode()[76:]
-            flow_data_string += bigram_generation(packet_string[76:], packet_len=payload_len, flag = True)
+            flow_data_string += bigram_generation(packet_string, packet_len=payload_len, flag = True)
     feature_data.append(flow_data_string)
     feature_data.append(packet_length[0])
     feature_data.append(packet_time[0])
