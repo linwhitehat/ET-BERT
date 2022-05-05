@@ -114,11 +114,12 @@ Note: you'll need to change the path in programes.
 #### If you are using the work (e.g. pre-trained model) in ET-BERT for academic work, please cite the [paper](https://arxiv.org/abs/2202.06335) published in WWW 2022:
 
 ```
-@inproceedings{Lin2022etbert,
-  author        = {Lin, Xinjie and Xiong, Gang and Gou, Gaopeng and Li, Zhen and Shi, Junzheng and Yu, Jing},
-  title         = {ET-BERT: A Contextualized Datagram Representation with Pre-training Transformers for Encrypted Traffic Classification},
-  year          = {2022},
-  journal     = {arXiv preprint arXiv:2202.06335},
+@inproceedings{lin2022bert,
+  title={ET-BERT: A Contextualized Datagram Representation with Pre-training Transformers for Encrypted Traffic Classification},
+  author={Lin, Xinjie and Xiong, Gang and Gou, Gaopeng and Li, Zhen and Shi, Junzheng and Yu, Jing},
+  booktitle={Proceedings of the ACM Web Conference 2022},
+  pages={633--642},
+  year={2022}
 }
 ```
 
