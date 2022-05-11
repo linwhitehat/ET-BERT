@@ -39,9 +39,3 @@ Then you can set `splitcap=True` (line:54) and run the code for splitting PCAP d
 3. Generation. 
 After data pre-processing is completed, variables need to be changed for generating fine-tuned training data. The `pcap_path` should be the path of splitted data and set 
 `splitcap=False`. Now the `sample` can be unrestricted by the minimum sample size. The `open_dataset_not_pcap` and `file2dir` should be False. Then the dataset for fine-tuning will be generated and saved in `dataset_save_path`. 
-
-### Shared Datasets
-We generate the training data (packet-level) from the public dataset `ISCX-VPN` selected in the paper and share it to the cloud drive for testing purposes.
-
-1. [ISCX-VPN](https://drive.google.com/drive/folders/1is609sosAdqf9YJAfwr72hBqM4OeNuZq?usp=sharing)
-2. [USTC-TFC](https://drive.google.com/file/d/1F09zxln9iFg2HWoqc6m4LKFhYK7cDQv_/view?usp=sharing)
