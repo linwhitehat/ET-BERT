@@ -17,7 +17,6 @@ import tqdm
 import random
 import shutil
 import dataset_generation
-import build_vector_dataset
 
 import data_preprocess
 import open_dataset_deal
