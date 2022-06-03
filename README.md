@@ -4,6 +4,10 @@
 ![](https://img.shields.io/badge/license-MIT-000000.svg)
 [![arXiv](https://img.shields.io/badge/arXiv-1909.05658-<color>.svg)](https://arxiv.org/abs/2202.06335)
 
+**Note:**
+- ⭐ **Please leave a <font color='orange'>STAR</font> if you like this project!** ⭐
+- If you find any <font color='red'>incorrect</font> / <font color='red'>inappropriate</font> / <font color='red'>outdated</font> content, please kindly consider opening an issue or a PR. 
+
 **The repository of ET-BERT, a network traffic classification model on encrypted traffic.**
 
 ET-BERT is a method for learning datagram contextual relationships from encrypted traffic, which could be **directly applied to different encrypted traffic scenarios and accurately identify classes of traffic**. First, ET-BERT employs multi-layer attention in large scale unlabelled traffic to learn both inter-datagram contextual and inter-traffic transport relationships. Second, ET-BERT could be applied to a specific scenario to identify traffic types by fine-tuning the labeled encrypted traffic on a small scale.
