@@ -60,7 +60,7 @@ def cut(obj, sec):
         remanent_count = len(result[0])%4
     except Exception as e:
         remanent_count = 0
-        print(1)
+        print("cut datagram error!")
     if remanent_count == 0:
         pass
     else:
