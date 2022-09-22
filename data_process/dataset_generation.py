@@ -82,8 +82,6 @@ def bigram_generation(packet_datagram, packet_len = 64, flag=True):
             break
         result += merge_word_bigram
         result += ' '
-    if flag == True:
-        result = result.rstrip()
     
     return result
 
