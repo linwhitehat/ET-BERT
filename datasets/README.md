@@ -3,6 +3,7 @@ We generate the training data (packet-level) from the public datasets `ISCX-VPN`
 
 1. [ISCX-VPN](https://drive.google.com/drive/folders/1is609sosAdqf9YJAfwr72hBqM4OeNuZq?usp=sharing)
 2. [USTC-TFC](https://drive.google.com/file/d/1F09zxln9iFg2HWoqc6m4LKFhYK7cDQv_/view?usp=sharing)
+3. [Others](https://drive.google.com/drive/folders/1is609sosAdqf9YJAfwr72hBqM4OeNuZq?usp=sharing)
 
 ### Labels of Datasets
 
