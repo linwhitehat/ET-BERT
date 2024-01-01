@@ -125,22 +125,13 @@ Note: you'll need to change the path in programes.
                Zhen Li and
                Junzheng Shi and
                Jing Yu},
-  editor    = {Fr{\'{e}}d{\'{e}}rique Laforest and
-               Rapha{\"{e}}l Troncy and
-               Elena Simperl and
-               Deepak Agarwal and
-               Aristides Gionis and
-               Ivan Herman and
-               Lionel M{\'{e}}dini},
   title     = {{ET-BERT:} {A} Contextualized Datagram Representation with Pre-training
                Transformers for Encrypted Traffic Classification},
   booktitle = {{WWW} '22: The {ACM} Web Conference 2022, Virtual Event, Lyon, France,
                April 25 - 29, 2022},
   pages     = {633--642},
   publisher = {{ACM}},
-  year      = {2022},
-  url       = {https://doi.org/10.1145/3485447.3512217},
-  doi       = {10.1145/3485447.3512217}
+  year      = {2022}
 }
 ```
 
