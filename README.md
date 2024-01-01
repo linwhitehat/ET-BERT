@@ -118,7 +118,7 @@ Note: you'll need to change the path in programes.
 #### If you are using the work (e.g. pre-trained model) in ET-BERT for academic work, please cite the [paper](https://arxiv.org/abs/2202.06335) published in WWW 2022:
 
 ```
-@inproceedings{lin2022bert,
+@inproceedings{lin2022etbert,
   author    = {Xinjie Lin and
                Gang Xiong and
                Gaopeng Gou and
