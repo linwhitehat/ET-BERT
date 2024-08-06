@@ -206,11 +206,11 @@ def count_label_number(samples):
 
     for index in range(len(dataset_length)):
         if dataset_length[index] < samples[0]:
-            print("label %s has less sample's number than defined samples %d" % (labels[index], samples[0]))、
+            print("label %s has less sample's number than defined samples %d" % (labels[index], samples[0]))
             new_samples[index] = dataset_length[index]
     return new_samples
 
-if __name__ == '__main__':、
+if __name__ == '__main__':
     open_dataset_not_pcap = 0
     
     if open_dataset_not_pcap:
