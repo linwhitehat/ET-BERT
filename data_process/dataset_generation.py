@@ -143,12 +143,10 @@ def get_feature_packet(label_pcap,payload_len):
     for packet in packets:
             packet_data = packet.copy()
             data = (binascii.hexlify(bytes(packet_data)))
-            
             packet_string = data.decode()
-            
             new_packet_string = packet_string[76:]
-            
             packet_data_string += bigram_generation(new_packet_string, packet_len=payload_len, flag = True)
+            break
 
     feature_data.append(packet_data_string)
     return feature_data
