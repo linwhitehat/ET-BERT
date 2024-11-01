@@ -5,6 +5,7 @@ from uer.utils.vocab import Vocab
 import collections
 import unicodedata
 import six
+import regex as re
 
 
 class Tokenizer(object):
@@ -53,25 +54,25 @@ class Tokenizer(object):
 
 
 class CharTokenizer(Tokenizer):
-        
+
     def __init__(self, args, is_src=True):
         super().__init__(args, is_src)
 
     def tokenize(self, text, use_vocab=True):
         if use_vocab:
-            return [token if token in self.vocab else "[UNK]" for token in list(text.strip())]
+            return [token if token in self.vocab else UNK_TOKEN for token in list(text.strip())]
         else:
             return [token for token in list(text.strip())]
 
 
 class SpaceTokenizer(Tokenizer):
-     
+
     def __init__(self, args, is_src=True):
         super().__init__(args, is_src)
 
     def tokenize(self, text, use_vocab=True):
         if use_vocab:
-            return [token if token in self.vocab else "[UNK]" for token in text.strip().split(" ")]
+            return [token if token in self.vocab else UNK_TOKEN for token in text.strip().split(" ")]
         else:
             return [token for token in text.strip().split(" ")]
 
@@ -190,7 +191,7 @@ def convert_by_vocab(vocab, items):
     """Converts a sequence of [tokens|ids] using the vocab."""
     output = []
     for item in items:
-        output.append(vocab[item])
+        output.append(vocab[item] if item in vocab else vocab.get(UNK_TOKEN))
     return output
 
 
@@ -211,14 +212,50 @@ def whitespace_tokenize(text):
     return tokens
 
 
+def bytes_to_unicode():
+    """
+    Returns list of utf-8 byte and a mapping to unicode strings. We specifically avoids mapping to whitespace/control
+    characters the bpe code barfs on.
+    The reversible bpe codes work on unicode strings. This means you need a large # of unicode characters in your vocab
+    if you want to avoid UNKs. When you're at something like a 10B token dataset you end up needing around 5K for
+    decent coverage. This is a significant percentage of your normal, say, 32K bpe vocab. To avoid that, we want lookup
+    tables between utf-8 bytes and unicode strings.
+    """
+    bs = (
+        list(range(ord("!"), ord("~") + 1)) + list(range(ord("¡"), ord("¬") + 1)) + list(range(ord("®"), ord("ÿ") + 1))
+    )
+    cs = bs[:]
+    n = 0
+    for b in range(2 ** 8):
+        if b not in bs:
+            bs.append(b)
+            cs.append(2 ** 8 + n)
+            n += 1
+    cs = [chr(n) for n in cs]
+    return dict(zip(bs, cs))
+
+
+def get_pairs(word):
+    """
+    Return set of symbol pairs in a word.
+    Word is represented as tuple of symbols (symbols being variable-length strings).
+    """
+    pairs = set()
+    prev_char = word[0]
+    for char in word[1:]:
+        pairs.add((prev_char, char))
+        prev_char = char
+    return pairs
+
+
 class BertTokenizer(Tokenizer):
     """Runs end-to-end tokenziation."""
 
-    def __init__(self, args, is_src=True, do_lower_case=True):
+    def __init__(self, args, is_src=True):
         super().__init__(args, is_src)
         if not args.spm_model_path:
-            self.basic_tokenizer = BasicTokenizer(do_lower_case=do_lower_case)
-            self.wordpiece_tokenizer = WordpieceTokenizer(vocab=self.vocab)
+            self.basic_tokenizer = BasicTokenizer(do_lower_case=args.do_lower_case if is_src else args.tgt_do_lower_case)
+            self.wordpiece_tokenizer = WordpieceTokenizer(vocab=self.vocab, unk_token=UNK_TOKEN)
 
     def tokenize(self, text):
         if self.sp_model:
@@ -232,15 +269,114 @@ class BertTokenizer(Tokenizer):
         return split_tokens
 
 
+class BPETokenizer(Tokenizer):
+    def __init__(self, args, is_src=True):
+        super().__init__(args, is_src)
+
+        self.byte_encoder = bytes_to_unicode()
+        self.byte_decoder = {v: k for k, v in self.byte_encoder.items()}
+        with open(args.merges_path, encoding="utf-8") as merges_handle:
+            bpe_merges = merges_handle.read().split("\n")[1:-1]
+        bpe_merges = [tuple(merge.split()) for merge in bpe_merges]
+        self.bpe_ranks = dict(zip(bpe_merges, range(len(bpe_merges))))
+        self.cache = {}
+
+        # Should have added re.IGNORECASE so BPE merges can happen for capitalized versions of contractions
+        self.pat = re.compile(r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+""")
+
+    def bpe(self, token):
+        if token in self.cache:
+            return self.cache[token]
+        word = tuple(token)
+        pairs = get_pairs(word)
+
+        if not pairs:
+            return token
+
+        while True:
+            bigram = min(pairs, key=lambda pair: self.bpe_ranks.get(pair, float("inf")))
+            if bigram not in self.bpe_ranks:
+                break
+            first, second = bigram
+            new_word = []
+            i = 0
+            while i < len(word):
+                try:
+                    j = word.index(first, i)
+                except ValueError:
+                    new_word.extend(word[i:])
+                    break
+                else:
+                    new_word.extend(word[i:j])
+                    i = j
+
+                if word[i] == first and i < len(word) - 1 and word[i + 1] == second:
+                    new_word.append(first + second)
+                    i += 2
+                else:
+                    new_word.append(word[i])
+                    i += 1
+            new_word = tuple(new_word)
+            word = new_word
+            if len(word) == 1:
+                break
+            else:
+                pairs = get_pairs(word)
+        word = " ".join(word)
+        self.cache[token] = word
+        return word
+
+    def tokenize(self, text):
+        """Tokenize a string."""
+        bpe_tokens = []
+        for token in re.findall(self.pat, text):
+            token = "".join(
+                self.byte_encoder[b] for b in token.encode("utf-8")
+            )  # Maps all our bytes to unicode strings, avoiding control tokens of the BPE (spaces in our case)
+            bpe_tokens.extend(bpe_token for bpe_token in self.bpe(token).split(" "))
+        return bpe_tokens
+
+
+class XLMRobertaTokenizer(Tokenizer):
+    """Runs end-to-end tokenziation."""
+
+    def __init__(self, args, is_src=True):
+        super().__init__(args, is_src)
+        assert args.spm_model_path, \
+            "spm_model_path must provided for huggingface roberta tokenizer"
+
+        special_tokens = ["<s>", "<pad>", "</s>", "<unk>"]
+        vocab = [token for token in self.vocab if token not in special_tokens]
+        vocab = special_tokens + vocab + ["<mask>"]
+        self.vocab = {k: v for v, k in enumerate(vocab)}
+        self.inv_vocab = {v: k for k, v in self.vocab.items()}
+
+    def tokenize(self, text):
+        split_tokens = encode_pieces(self.sp_model, text, return_unicode=False)
+
+        return split_tokens
+
+    def convert_tokens_to_ids(self, tokens):
+
+        return convert_by_vocab(self.vocab, tokens)
+
+    def convert_ids_to_tokens(self, ids):
+
+        return convert_by_vocab(self.inv_vocab, ids)
+
+
 class BasicTokenizer(object):
     """Runs basic tokenization (punctuation splitting, lower casing, etc.)."""
 
-    def __init__(self, do_lower_case=True):
+    def __init__(self, do_lower_case):
         """Constructs a BasicTokenizer.
         Args:
             do_lower_case: Whether to lower case the input.
         """
-        self.do_lower_case = do_lower_case
+        if do_lower_case == "true":
+            self.do_lower_case = True
+        else:
+            self.do_lower_case = False
 
     def tokenize(self, text):
         """Tokenizes a piece of text."""

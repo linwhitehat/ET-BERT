@@ -4,6 +4,9 @@ from uer.utils.misc import *
 
 
 class RnnEncoder(nn.Module):
+    """
+    RNN encoder.
+    """
     def __init__(self, args):
         super(RnnEncoder, self).__init__()
 
@@ -25,6 +28,7 @@ class RnnEncoder(nn.Module):
         self.drop = nn.Dropout(args.dropout)
 
     def forward(self, emb, _):
+        self.rnn.flatten_parameters()
         hidden = self.init_hidden(emb.size(0), emb.device)
         output, hidden = self.rnn(emb, hidden)
         output = self.drop(output)
@@ -38,6 +42,9 @@ class RnnEncoder(nn.Module):
 
 
 class LstmEncoder(RnnEncoder):
+    """
+    LSTM encoder.
+    """
     def __init__(self, args):
         super(LstmEncoder, self).__init__(args)
 
@@ -58,6 +65,9 @@ class LstmEncoder(RnnEncoder):
 
 
 class GruEncoder(RnnEncoder):
+    """
+    GRU encoder.
+    """
     def __init__(self, args):
         super(GruEncoder, self).__init__(args)
 
@@ -70,6 +80,9 @@ class GruEncoder(RnnEncoder):
 
 
 class BirnnEncoder(nn.Module):
+    """
+    Bi-directional RNN encoder.
+    """
     def __init__(self, args):
         super(BirnnEncoder, self).__init__()
 
@@ -93,12 +106,14 @@ class BirnnEncoder(nn.Module):
     
     def forward(self, emb, _):
         # Forward.
+        self.rnn_forward.flatten_parameters()
         emb_forward = emb
         hidden_forward = self.init_hidden(emb_forward.size(0), emb_forward.device)
         output_forward, hidden_forward = self.rnn_forward(emb_forward, hidden_forward)
         output_forward = self.drop(output_forward)
 
         # Backward.
+        self.rnn_backward.flatten_parameters()
         emb_backward = flip(emb, 1)
         hidden_backward = self.init_hidden(emb_backward.size(0), emb_backward.device)
         output_backward, hidden_backward = self.rnn_backward(emb_backward, hidden_backward)
@@ -112,6 +127,9 @@ class BirnnEncoder(nn.Module):
 
 
 class BilstmEncoder(BirnnEncoder):
+    """
+     Bi-directional LSTM encoder.
+     """
     def __init__(self, args):
         super(BilstmEncoder, self).__init__(args)
 
@@ -133,6 +151,9 @@ class BilstmEncoder(BirnnEncoder):
 
 
 class BigruEncoder(BirnnEncoder):
+    """
+     Bi-directional GRU encoder.
+     """
     def __init__(self, args):
         super(BigruEncoder, self).__init__(args)
 
