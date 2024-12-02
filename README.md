@@ -1,4 +1,4 @@
-# ET-BERT
+# ET-BERT: A Contextualized Datagram Representation with Pre-training Transformers for Encrypted Traffic Classification
 
 <!-- 
 [![codebeat badge](https://codebeat.co/badges/f75fab90-6d00-44b4-bb42-d19067400243)](https://codebeat.co/projects/github-com-linwhitehat-et-bert-main) 
