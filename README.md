@@ -147,4 +147,4 @@ Note: you'll need to change the path in programes.
 <br/>
 
 ## Contact
-Please post a Github issue if you have any questions.
+Please post a Github issue if you have any questions. Welcome to discuss new ideas, techniques, and improvements!
