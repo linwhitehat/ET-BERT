@@ -183,116 +183,12 @@ def get_feature_flow(label_pcap, payload_len, payload_pac):
 
     if feature_result.keys() == {}.keys():
         return -1
-
-    packet_length = []
-    packet_time = []
-    packet_direction = []
-    packet_message_type = []
     
     if feature_result == {}:
         return -1
     feature_result_lens = len(feature_result.keys())
     for key in feature_result.keys():
         value = feature_result[key]
-        packet_length.append(value.ip_lengths)
-        packet_time.append(value.ip_timestamps)
-
-        if len(packet_length) < feature_result_lens:
-            continue
-        elif len(packet_length) == 1:
-            pass
-        else:
-            packet_length = [sum(packet_length, [])]
-            packet_time = [sum(packet_time, [])]
-
-        extension_dict = {}
-        
-        for len_index in range(len(packet_length)):
-            extension_list = [0]*(len(packet_length[len_index]))
-
-        extensions = value.extension
-        
-        if 'tls.record.content_type' in extensions.keys():
-            for record_content in extensions['tls.record.content_type']:
-                packet_index = record_content[1]
-                ms_type = []
-                
-                if len(record_content[0]) > 2:
-                    ms_type.extend(record_content[0].split(','))
-                else:
-                    ms_type.append(record_content[0])
-                
-                extension_dict[packet_index] = ms_type
-            
-            if 'tls.handshake.type' in extensions.keys():
-                for tls_handshake in extensions['tls.handshake.type']:
-                    packet_index = tls_handshake[1]
-                    if packet_index not in extension_dict.keys():
-                        continue
-                    ms_type = []
-                    if len(tls_handshake[0]) > 2:
-                        ms_type.extend(tls_handshake[0].split(','))
-                    else:
-                        ms_type.append(tls_handshake[0])
-                    source_length = len(extension_dict[packet_index])
-                    for record_index in range(source_length):
-                        if extension_dict[packet_index][record_index] == '22':
-                            for handshake_type_index in range(len(ms_type)):
-                                extension_dict[packet_index][record_index] = '22:' + ms_type[handshake_type_index]
-                                if handshake_type_index > 0:
-                                    extension_dict[packet_index].insert(handshake_type_index,
-                                                                        ('22:' + ms_type[handshake_type_index]))
-                            break
-        if 'tls.record.opaque_type' in extensions.keys():
-            for record_opaque in extensions['tls.record.opaque_type']:
-                packet_index = record_opaque[1]
-                ms_type = []
-                if len(record_opaque[0]) > 2:
-                    ms_type.extend(record_opaque[0].split(","))
-                else:
-                    ms_type.append(record_opaque[0])
-                if packet_index not in extension_dict.keys():
-                    extension_dict[packet_index] = ms_type
-                else:
-                    extension_dict[packet_index].extend(ms_type)
-
-        extension_string_dict = {}
-        for key in extension_dict.keys():
-            temp_string = ''
-            for status in extension_dict[key]:
-                temp_string += status+','
-            temp_string = temp_string[:-1]
-            extension_string_dict[key] = temp_string
-        
-        is_source = 0
-        if is_source:
-            packet_message_type.append(extension_string_dict)
-        else:
-            for key in extension_dict.keys():
-                if len(set(extension_dict[key])) == 1 and len(extension_dict[key]) > 1:
-                    try:
-                        extension_list[key] += len(extension_dict[key])
-                    except Exception as e:
-                        print(key)
-                else:
-                    for status in extension_dict[key]:
-                        if ':' in status:
-                            
-                            extension_list[key - 1] += reduce(operator.mul, [int(x) for x in status.split(':')], 1)
-                        else:
-                           
-                            if key <= len(packet_length[0]):
-                                extension_list[key - 1] += int(status)
-                            else:
-                                with open("error_while_writin_record","a") as f:
-                                    f.write(label_pcap + '\n')
-                                continue
-            packet_message_type.append(extension_list)
-    for length in packet_length[0]:
-        if length > 0:
-            packet_direction.append(1)
-        else:
-            packet_direction.append(-1)
 
     packet_index = 0
     for packet in packets:
@@ -309,10 +205,6 @@ def get_feature_flow(label_pcap, payload_len, payload_pac):
             packet_string = data.decode()[76:]
             flow_data_string += bigram_generation(packet_string, packet_len=payload_len, flag = True)
     feature_data.append(flow_data_string)
-    feature_data.append(packet_length[0])
-    feature_data.append(packet_time[0])
-    feature_data.append(packet_direction)
-    feature_data.append(packet_message_type[0])
 
     return feature_data
 
