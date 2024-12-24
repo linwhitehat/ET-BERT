@@ -21,8 +21,6 @@ class BertTarget(MlmTarget):
             memory_bank: [batch_size x seq_length x hidden_size]
             tgt: tuple with tgt_mlm [batch_size x seq_length] and tgt_nsp [batch_size]
 
-			output¼´´Ë´¦µÄmemory_bank
-
         Returns:
             loss_mlm: Masked language model loss.
             loss_nsp: Next sentence prediction loss.
@@ -33,7 +31,7 @@ class BertTarget(MlmTarget):
 
         # Masked language model (MLM).
         assert type(tgt) == tuple
-        tgt_mlm, tgt_nsp, tgt_tov = tgt[0], tgt[1], tgt[2]
+        tgt_mlm, tgt_nsp = tgt[0], tgt[1]
         loss_mlm, correct_mlm, denominator = self.mlm(memory_bank, tgt_mlm)
 
         # Next sentence prediction (NSP).
@@ -42,10 +40,4 @@ class BertTarget(MlmTarget):
         loss_nsp = self.criterion(self.softmax(output_nsp), tgt_nsp)
         correct_nsp = self.softmax(output_nsp).argmax(dim=-1).eq(tgt_nsp).sum()
 
-        # TOV sentence prediction
-        output_tov = torch.tanh(self.nsp_linear_1(memory_bank[:, 0, :]))
-        output_tov = self.nsp_linear_2(output_tov)
-        loss_tov = self.criterion(self.softmax(output_tov), tgt_tov)
-        correct_tov = self.softmax(output_tov).argmax(dim=-1).eq(tgt_tov).sum()
-
-        return loss_mlm, loss_nsp, loss_tov, correct_mlm, correct_nsp, correct_tov, denominator
+        return loss_mlm, loss_nsp, correct_mlm, correct_nsp, denominator

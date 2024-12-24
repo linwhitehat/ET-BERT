@@ -16,14 +16,15 @@ class MultiHeadedAttention(nn.Module):
         self.per_head_size = attention_head_size
         self.with_scale = with_scale
         self.inner_hidden_size = heads_num * attention_head_size
-        self.linear_layers = nn.ModuleList(
-            [nn.Linear(hidden_size, self.inner_hidden_size, bias=has_bias) for _ in range(3)]
-        )
 
+        self.linear_layers = nn.ModuleList(
+                [nn.Linear(hidden_size, self.inner_hidden_size, bias=has_bias) for _ in range(3)]
+            )
+        
         self.dropout = nn.Dropout(dropout)
         self.final_linear = nn.Linear(self.inner_hidden_size, hidden_size, bias=has_bias)
 
-    def forward(self, key, value, query, mask, position_bias=None, has_residual_attention=False, prev_attn=None):
+    def forward(self, key, value, query, mask, position_bias=None):
         """
         Args:
             key: [batch_size x seq_length x hidden_size]
@@ -56,21 +57,15 @@ class MultiHeadedAttention(nn.Module):
                              transpose(1, 2) \
                              for l, x in zip(self.linear_layers, (query, key, value))
                             ]
-        
+
         scores = torch.matmul(query, key.transpose(-2, -1))
         if position_bias is not None:
             scores = scores + position_bias
         if self.with_scale:
             scores = scores / math.sqrt(float(per_head_size))
-        scores = scores + mask.type_as(scores)
-        prev_attn_out = None
-        if has_residual_attention:
-            if prev_attn is not None:
-                scores += prev_attn
-            prev_attn_out = scores
-        # probs = nn.Softmax(dim=-1)(scores)
-        probs = nn.functional.softmax(scores, dim=-1, dtype=torch.float32).to(query.dtype)
+        scores = scores + mask
+        probs = nn.Softmax(dim=-1)(scores)
         probs = self.dropout(probs)
         output = unshape(torch.matmul(probs, value))
         output = self.final_linear(output)
-        return output, prev_attn_out
+        return output
