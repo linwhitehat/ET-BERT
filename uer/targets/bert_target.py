@@ -33,6 +33,7 @@ class BertTarget(MlmTarget):
         assert type(tgt) == tuple
         tgt_mlm, tgt_nsp = tgt[0], tgt[1]
         loss_mlm, correct_mlm, denominator = self.mlm(memory_bank, tgt_mlm)
+        #loss_mlm, correct_mlm, denominator = 0.0, 0.0, 0.0
 
         # Next sentence prediction (NSP).
         output_nsp = torch.tanh(self.nsp_linear_1(memory_bank[:, 0, :]))
@@ -40,4 +41,6 @@ class BertTarget(MlmTarget):
         loss_nsp = self.criterion(self.softmax(output_nsp), tgt_nsp)
         correct_nsp = self.softmax(output_nsp).argmax(dim=-1).eq(tgt_nsp).sum()
 
+        #return loss_nsp, correct_nsp
+        #return loss_mlm, correct_mlm, denominator
         return loss_mlm, loss_nsp, correct_mlm, correct_nsp, denominator

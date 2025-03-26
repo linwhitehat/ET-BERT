@@ -355,6 +355,7 @@ class BertDataset(Dataset):
 
                     tokens_b = []
                     is_random_next = 0
+                    is_tov = 0
 
                     if len(current_chunk) == 1 or random.random() < 0.5:
                         is_random_next = 1
@@ -379,6 +380,12 @@ class BertDataset(Dataset):
                         is_random_next = 0
                         for j in range(a_end, len(current_chunk)):
                             tokens_b.extend(current_chunk[j])
+                        if random.random() < 0.5:
+                            is_tov = 1
+                            tov_num = range(len(tokens_b))
+                            random_tov = random.sample(tov_num, 20)
+                            for i in range(0,20, 2):
+                                tokens_b[random_tov[i]], tokens_b[random_tov[i+1]] = tokens_b[random_tov[i+1]], tokens_b[random_tov[i]]
 
                     truncate_seq_pair(tokens_a, tokens_b, max_num_tokens)
 
@@ -396,7 +403,7 @@ class BertDataset(Dataset):
 
                     if not self.dynamic_masking:
                         src, tgt_mlm = mask_seq(src, self.tokenizer, self.whole_word_masking, self.span_masking, self.span_geo_prob, self.span_max_length)
-                        instance = (src, tgt_mlm, is_random_next, seg_pos)
+                        instance = (src, tgt_mlm, is_random_next, seg_pos, is_tov)
                     else:
                         instance = (src, is_random_next, seg_pos)
 
@@ -562,27 +569,24 @@ class MlmDataLoader(DataLoader):
             seg = []
 
             masked_words_num = 0
-            
-            try:
-                for ins in instances:
-                    if len(ins) == 3:
-                        src.append(ins[0])
-                        masked_words_num += len(ins[1])
-                        tgt.append([0] * len(ins[0]))
-                        for mask in ins[1]:
-                            tgt[-1][mask[0]] = mask[1]
-                        seg.append([1] * ins[2][0] + [PAD_ID] * (len(ins[0]) - ins[2][0]))
-                    else:
-                        src_single, tgt_single = mask_seq(ins[0], self.tokenizer, self.whole_word_masking, self.span_masking, self.span_geo_prob, self.span_max_length)
-                        masked_words_num += len(tgt_single)
-                        src.append(src_single)
-                        tgt.append([0] * len(ins[0]))
-                        for mask in tgt_single:
-                            tgt[-1][mask[0]] = mask[1]
-                        seg.append([1] * ins[1][0] + [PAD_ID] * (len(ins[0]) - ins[1][0]))
-            except Exception as e:
-                print(e)
-                print(ins)
+
+            for ins in instances:
+                if len(ins) == 3:
+                    src.append(ins[0])
+                    masked_words_num += len(ins[1])
+                    tgt.append([0] * len(ins[0]))
+                    for mask in ins[1]:
+                        tgt[-1][mask[0]] = mask[1]
+                    seg.append([1] * ins[2][0] + [PAD_ID] * (len(ins[0]) - ins[2][0]))
+                else:
+                    src_single, tgt_single = mask_seq(ins[0], self.tokenizer, self.whole_word_masking, self.span_masking, self.span_geo_prob, self.span_max_length)
+                    masked_words_num += len(tgt_single)
+                    src.append(src_single)
+                    tgt.append([0] * len(ins[0]))
+                    for mask in tgt_single:
+                        tgt[-1][mask[0]] = mask[1]
+                    seg.append([1] * ins[1][0] + [PAD_ID] * (len(ins[0]) - ins[1][0]))
+
             if masked_words_num == 0:
                 continue
 
