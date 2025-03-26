@@ -1,11 +1,8 @@
-#!/usr/bin/python3
-#-*- coding:utf-8 -*-
 import argparse
 import six
 from packaging import version
 from uer.utils.data import *
 from uer.utils import *
-
 
 assert version.parse(six.__version__) >= version.parse("1.12.0")
 
