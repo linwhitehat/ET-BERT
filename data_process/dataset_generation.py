@@ -366,21 +366,11 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
                 dataset[label_id[key]]["payload"][str(dataset[label_id[key]]["samples"])] = \
                     feature_data[0]
                 if dataset_level == "flow":
-                    dataset[label_id[key]]["length"][str(dataset[label_id[key]]["samples"])] = \
-                        feature_data[1]
-                    dataset[label_id[key]]["time"][str(dataset[label_id[key]]["samples"])] = \
-                        feature_data[2]
-                    dataset[label_id[key]]["direction"][str(dataset[label_id[key]]["samples"])] = \
-                        feature_data[3]
-                    dataset[label_id[key]]["message_type"][str(dataset[label_id[key]]["samples"])] = \
-                        feature_data[4]
+                    pass
             else:
                 dataset[label_id[key]]["payload"]["1"] = feature_data[0]
                 if dataset_level == "flow":
-                    dataset[label_id[key]]["length"]["1"] = feature_data[1]
-                    dataset[label_id[key]]["time"]["1"] = feature_data[2]
-                    dataset[label_id[key]]["direction"]["1"] = feature_data[3]
-                    dataset[label_id[key]]["message_type"]["1"] = feature_data[4]
+                    pass
 
     all_data_number = 0
     for index in range(len(label_name_list)):
