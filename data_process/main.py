@@ -89,26 +89,12 @@ def dataset_extract(model):
     x_payload_test = []
     y_test = []
 
-    if dataset_level == "packet":
-        for train_index, test_index in split_1.split(x_payload, dataset_label):
-            x_payload_train, y_train = x_payload[train_index], dataset_label[train_index]
-            x_payload_test, y_test = x_payload[test_index], dataset_label[test_index]
-        for test_index, valid_index in split_2.split(x_payload_test, y_test):
-            x_payload_valid, y_valid = x_payload_test[valid_index], y_test[valid_index]
-            x_payload_test, y_test = x_payload_test[test_index], y_test[test_index]
-    else:
-        for train_index, test_index in split_1.split(x_payload, dataset_label):
-            x_payload_train, y_train = \
-                x_payload[train_index], \
-                dataset_label[train_index]
-            x_payload_test,y_test = \
-                x_payload[test_index], \
-                dataset_label[test_index]
-        for test_index, valid_index in split_2.split(x_payload_test, y_test):
-            x_payload_valid, y_valid = \
-                x_payload_test[valid_index], y_test[valid_index]
-            x_payload_test, y_test = \
-                x_payload_test[test_index], y_test[test_index]
+    for train_index, test_index in split_1.split(x_payload, dataset_label):
+        x_payload_train, y_train = x_payload[train_index], dataset_label[train_index]
+        x_payload_test, y_test = x_payload[test_index], dataset_label[test_index]
+    for test_index, valid_index in split_2.split(x_payload_test, y_test):
+        x_payload_valid, y_valid = x_payload_test[valid_index], y_test[valid_index]
+        x_payload_test, y_test = x_payload_test[test_index], y_test[test_index]
 
     if not os.path.exists(dataset_save_path+"dataset\\"):
         os.mkdir(dataset_save_path+"dataset\\")
