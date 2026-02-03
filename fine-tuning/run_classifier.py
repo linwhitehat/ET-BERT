@@ -1,6 +1,9 @@
 """
 This script provides an exmaple to wrap UER-py for classification.
 """
+import os
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
 import random
 import argparse
 import torch
@@ -64,7 +67,7 @@ class Classifier(nn.Module):
             return None, logits
             #return temp_output, logits
 
-
+# counting label number
 def count_labels_num(path):
     labels_set, columns = set(), {}
     with open(path, mode="r", encoding="utf-8") as f:
@@ -78,11 +81,11 @@ def count_labels_num(path):
             labels_set.add(label)
     return len(labels_set)
 
-
+# loading pre-trained_model.bin
 def load_or_initialize_parameters(args, model):
     if args.pretrained_model_path is not None:
         # Initialize with pretrained model.
-        model.load_state_dict(torch.load(args.pretrained_model_path, map_location={'cuda:1':'cuda:0', 'cuda:2':'cuda:0', 'cuda:3':'cuda:0'}), strict=False)
+        model.load_state_dict(torch.load(args.pretrained_model_path, map_location='cpu'), strict=False)
     else:
         # Initialize with normal distribution.
         for n, p in list(model.named_parameters()):
@@ -224,7 +227,7 @@ def evaluate(args, dataset, print_confusion_matrix=False):
         print("Confusion matrix:")
         print(confusion)
         cf_array = confusion.numpy()
-        with open("/data2/lxj/pre-train/results/confusion_matrix",'w') as f:
+        with open("confusion_matrix.txt", 'w') as f:
             for cf_a in cf_array:
                 f.write(str(cf_a)+'\n')
         print("Report precision, recall, and f1:")
