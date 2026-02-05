@@ -10,7 +10,7 @@ def deal_label():
     return lower_label
 
 def deal_finetuning(excluding_label):
-    dataset_path = "I:\\datasets\\cstnet-tls1.3\\"
+    dataset_path = "E:\\datasets\\cstnet-tls1.3\\"
     save_dataset_path = dataset_path
     with open(dataset_path+"train_dataset.tsv",'r') as f:
         train_data = f.read().split('\n')[1:]

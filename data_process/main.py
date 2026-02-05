@@ -21,10 +21,10 @@ import dataset_generation
 import data_preprocess
 import open_dataset_deal
 
-_category = 120 # dataset class
-dataset_dir = "I:\\datasets\\" # the path to save dataset for dine-tuning
+_category = 84 # dataset class
+dataset_dir = "E:\\datasets\\" # the path to save dataset for dine-tuning
 
-pcap_path, dataset_save_path, samples, features, dataset_level = "I:\\cstnet-tls1.3\\packet\\splitcap\\", "I:\\cstnet-tls1.3\\packet\\result\\", [5000], ["payload"], "packet"
+pcap_path, dataset_save_path, samples, features, dataset_level = "E:\\captures\\splitcap\\", "E:\\datasets\\", [489], ["payload"], "flow"
 
 def dataset_extract(model):
     
@@ -50,7 +50,7 @@ def dataset_extract(model):
         print(e)
         print("Dataset directory %s not exist.\nBegin to obtain new dataset."%(dataset_save_path + "dataset\\"))
 
-    X,Y = dataset_generation.generation(pcap_path, samples, features, splitcap=False, dataset_save_path=dataset_save_path,dataset_level=dataset_level)
+    X,Y = dataset_generation.generation(pcap_path, samples, features, splitcap=False, dataset_save_path=dataset_save_path, dataset_level=dataset_level)
 
     dataset_statistic = [0] * _category
 
@@ -163,7 +163,6 @@ def unlabel_data(label_data):
         for row in data:
             nolabel_data += row[1] + '\n'
     nolabel_file = label_data.replace("test_dataset","nolabel_test_dataset")
-    #nolabel_file = label_data.replace("train_dataset", "nolabel_train_dataset")
     with open(nolabel_file, 'w',newline='') as f:
         f.write(nolabel_data)
     return 0

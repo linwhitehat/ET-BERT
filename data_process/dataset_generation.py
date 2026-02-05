@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #-*- coding:utf-8 -*-
-
+import subprocess
 import os
 import sys
 import copy
@@ -20,13 +20,13 @@ from flowcontainer.extractor import extract
 
 random.seed(40)
 
-word_dir = "I:/corpora/"
+word_dir = "E:\\ET-BERT-main\\ET-BERT-main\\corpora"
 word_name = "encrypted_burst.txt"
 
 def convert_pcapng_2_pcap(pcapng_path, pcapng_file, output_path):
     
     pcap_file = output_path + pcapng_file.replace('pcapng','pcap')
-    cmd = "I:\\editcap.exe -F pcap %s %s"
+    cmd = r'"C:\\Program Files\\Wireshark\\editcap.exe" -F pcap %s %s'
     command = cmd%(pcapng_path+pcapng_file, pcap_file)
     os.system(command)
     return 0
@@ -46,12 +46,20 @@ def split_cap(pcap_path, pcap_file, pcap_name, pcap_label='', dataset_level = 'f
         if not os.path.exists(pcap_path + "\\splitcap\\" + pcap_name):
             os.mkdir(pcap_path + "\\splitcap\\" + pcap_name)
         output_path = pcap_path + "\\splitcap\\" + pcap_name
+
+    splitcap_exe = r"C:\\Program Files\\Wireshark\\SplitCap.exe"
+    
     if dataset_level == 'flow':
-        cmd = "I:\\SplitCap.exe -r %s -s session -o " + output_path
+        args = [splitcap_exe, "-r", pcap_file, "-s", "session", "-o", output_path]
     elif dataset_level == 'packet':
-        cmd = "I:\\SplitCap.exe -r %s -s packets 1 -o " + output_path
-    command = cmd%pcap_file
-    os.system(command)
+        args = [splitcap_exe, "-r", pcap_file, "-s", "packets", "1", "-o", output_path]
+    
+    try:
+        # shell=True를 사용하지 않고 직접 실행하여 공백 문제를 우회합니다.
+        subprocess.run(args, check=True)
+    except Exception as e:
+        print(f"Error splitting {pcap_file}: {e}")
+        
     return output_path
 
 def cut(obj, sec):
@@ -158,7 +166,7 @@ def get_feature_flow(label_pcap, payload_len, payload_pac):
     packet_count = 0  
     flow_data_string = '' 
 
-    feature_result = extract(label_pcap, filter='tcp', extension=['tls.record.content_type', 'tls.record.opaque_type', 'tls.handshake.type'])
+    feature_result = extract(label_pcap, filter='tcp', extension=['ssl.record.content_type', 'ssl.record.opaque_type', 'ssl.handshake.type'])
     if len(feature_result) == 0:
         feature_result = extract(label_pcap, filter='udp')
         if len(feature_result) == 0:
@@ -208,7 +216,7 @@ def get_feature_flow(label_pcap, payload_len, payload_pac):
 
     return feature_data
 
-def generation(pcap_path, samples, features, splitcap = False, payload_length = 128, payload_packet = 5, dataset_save_path = "I:\\ex_results\\", dataset_level = "flow"):
+def generation(pcap_path, samples, features, splitcap = False, payload_length = 128, payload_packet = 5, dataset_save_path = "E:\\ex_results\\", dataset_level = "flow"):
     if os.path.exists(dataset_save_path + "dataset.json"):
         print("the pcap file of %s is finished generating."%pcap_path)
         
@@ -262,8 +270,8 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
 
         tls13 = 0
         if tls13:
-            record_file = "I:\\ex_results\\picked_file_record"
-            target_path = "I:\\ex_results\\packet_splitcap\\"
+            record_file = "E:\\ex_results\\picked_file_record"
+            target_path = "E:\\ex_results\\packet_splitcap\\"
             if not os.path.getsize(target_path):
                 with open(record_file, 'r') as f:
                     record_files = f.read().split('\n')
@@ -378,7 +386,7 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
         all_data_number += dataset[label_id[label_name_list[index]]]["samples"]
     print("all\t%d"%(all_data_number))
 
-    with open(dataset_save_path + "\\picked_file_record","w") as p_f:
+    with open(dataset_save_path + "picked_file_record","w") as p_f:
         for i in r_file_record:
             p_f.write(i)
             p_f.write("\n")
@@ -438,7 +446,7 @@ def obtain_data(pcap_path, samples, features, dataset_save_path, json_data = Non
     return X,Y
 
 def combine_dataset_json():
-    dataset_name = "I:\\traffic_pcap\\splitcap\\dataset-"
+    dataset_name = "E:\\traffic_pcap\\splitcap\\dataset-"
     # dataset vocab
     dataset = {}
     # progress
@@ -455,13 +463,13 @@ def combine_dataset_json():
             print(new_key)
             if new_key not in dataset.keys():
                 dataset[new_key] = json_data[key]
-    with open("I:\\traffic_pcap\\splitcap\\dataset.json","w") as f:
+    with open("E:\\traffic_pcap\\splitcap\\dataset.json","w") as f:
         json.dump(dataset, fp=f, ensure_ascii=False, indent=4)
     return 0
 
 def pretrain_dataset_generation(pcap_path):
-    output_split_path = "I:\\dataset\\"
-    pcap_output_path = "I:\\dataset\\"
+    output_split_path = "E:\\dataset\\"
+    pcap_output_path = "E:\\dataset\\"
     
     if not os.listdir(pcap_output_path):
         print("Begin to convert pcapng to pcap.")
@@ -491,14 +499,46 @@ def size_format(size):
     file_size = '%.3f' % float(size/1000)
     return file_size
 
+"""
 if __name__ == '__main__':
     # pretrain
-    pcap_path = "I:\\pcaps\\"
+    pcap_path = "E:\\pcaps\\"
     # tls 13 downstream
-    #pcap_path, samples, features = "I:\\dataset\\labeled\\", 500, ["payload","length","time","direction","message_type"]
+    #pcap_path, samples, features = "E:\\dataset\\labeled\\", 500, ["payload","length","time","direction","message_type"]
     #X,Y = generation(pcap_path, samples, features, splitcap=False)
     # pretrain data
     pretrain_dataset_generation(pcap_path)
     #print("X:%s\tx:%s\tY:%s"%(len(X),len(X[0]),len(Y)))
     # combine dataset.json
     #combine_dataset_json()
+"""
+
+if __name__ == '__main__':
+    # 1. 내 데이터가 있는 폴더 경로 (뒤에 \\ 를 꼭 붙이세요)
+    # 예: C:\Users\User\Desktop\TrafficData\
+    pcap_path = r"E:\captures\\" 
+    
+    # 2. 결과 저장 경로
+    save_path = r"E:\ET_BERT_Result\\"
+    if not os.path.exists(save_path):
+        os.mkdir(save_path)
+
+    # 3. 샘플 수와 특징 정의 (원본 코드 참조)
+    # samples: 각 라벨당 뽑을 샘플 수 (데이터가 적다면 숫자를 줄이세요, 예: 100)
+    samples = [500] * 100 # 넉넉하게 100개 클래스라고 가정
+    features = ["payload", "length", "time", "direction", "message_type"]
+
+    # 4. 실행 (두 단계로 진행됩니다)
+    
+    # [1단계] PCAP을 세션별로 쪼개기 (SplitCap 실행)
+    # 처음엔 splitcap=True로 실행해야 합니다.
+    print("--- 1단계: 세션 분할 시작 ---")
+    generation(pcap_path, samples, features, splitcap=True, dataset_save_path=save_path, dataset_level="flow")
+    
+    # [2단계] 쪼개진 파일에서 데이터셋(JSON) 만들기
+    # 1단계가 끝나면 위 줄을 주석 처리하고 아래 줄의 주석을 푸세요.
+    # 이때 pcap_path는 splitcap 폴더 내부를 가리켜야 합니다.
+    
+    # print("--- 2단계: 데이터셋 생성 시작 ---")
+    # split_folder = pcap_path + "splitcap\\"
+    # X, Y = generation(split_folder, samples, features, splitcap=False, dataset_save_path=save_path, dataset_level="flow")
