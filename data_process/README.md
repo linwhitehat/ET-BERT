@@ -39,3 +39,14 @@ Then you can set `splitcap=True` (line:54) and run the code for splitting PCAP d
 3. Generation. 
 After data pre-processing is completed, variables need to be changed for generating fine-tuned training data. The `pcap_path` should be the path of splitted data and set 
 `splitcap=False`. Now the `sample` can be unrestricted by the minimum sample size. The `open_dataset_not_pcap` and `file2dir` should be False. Then the dataset for fine-tuning will be generated and saved in `dataset_save_path`. 
+
+---
+시작 전, `./datasets/dataset`, `./captures/`를 만들어놓고 시작
+`_category` 값을 domain 개수에 맞게 설정
+`samples` 값을 flow 개수의 min 값에 맞게 설정
+
+flow 단위로 분리: `main.py`의 `SplitCap=True`로 설정
+전처리(토큰화): 
+- `main.py`의 `SplitCap=False`로 설정
+
+만약 잘못된 `dataset.json` 파일이 있다면, 전처리가 끝났다고 판단하여 프로그램이 종료됨. 잘못 생성된 `dataset.json`은 제거하고 다시 진행
