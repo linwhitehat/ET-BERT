@@ -3,7 +3,7 @@ import csv
 
 def verify_predictions():
     # 1. dataset.json 로드 및 Hex -> Label 맵핑 생성
-    with open('datasets/cstnet-tls1.3/flow/dataset.json', 'r', encoding='utf-8') as f:
+    with open('datasets/tls_version/dataset.json', 'r', encoding='utf-8') as f:
         dataset = json.load(f)
 
     hex_to_label = {}
@@ -15,8 +15,8 @@ def verify_predictions():
 
     # 2. 파일 비교 검증
     # nolabel_test_dataset.tsv (Hex 데이터)와 prediction.tsv (예측 라벨) 로드
-    with open('datasets/cstnet-tls1.3/flow/nolabel_test_dataset.tsv', 'r', encoding='utf-8') as f_hex, \
-         open('datasets/cstnet-tls1.3/flow/prediction.tsv', 'r', encoding='utf-8') as f_pred:
+    with open('datasets/tls_version/nolabel_test_dataset.tsv', 'r', encoding='utf-8') as f_hex, \
+         open('datasets/tls_version/prediction.tsv', 'r', encoding='utf-8') as f_pred:
         
         # TSV 파일이므로 delimiter='\t'
         hex_reader = csv.reader(f_hex, delimiter='\t')
