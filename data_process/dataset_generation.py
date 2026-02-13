@@ -55,7 +55,6 @@ def split_cap(pcap_path, pcap_file, pcap_name, pcap_label='', dataset_level = 'f
         args = [splitcap_exe, "-r", pcap_file, "-s", "packets", "1", "-o", output_path]
     
     try:
-        # shell=True를 사용하지 않고 직접 실행하여 공백 문제를 우회합니다.
         subprocess.run(args, check=True)
     except Exception as e:
         print(f"Error splitting {pcap_file}: {e}")
@@ -499,7 +498,6 @@ def size_format(size):
     file_size = '%.3f' % float(size/1000)
     return file_size
 
-"""
 if __name__ == '__main__':
     # pretrain
     pcap_path = "E:\\pcaps\\"
@@ -511,34 +509,3 @@ if __name__ == '__main__':
     #print("X:%s\tx:%s\tY:%s"%(len(X),len(X[0]),len(Y)))
     # combine dataset.json
     #combine_dataset_json()
-"""
-
-if __name__ == '__main__':
-    # 1. 내 데이터가 있는 폴더 경로 (뒤에 \\ 를 꼭 붙이세요)
-    # 예: C:\Users\User\Desktop\TrafficData\
-    pcap_path = r"E:\captures\\" 
-    
-    # 2. 결과 저장 경로
-    save_path = r"E:\ET_BERT_Result\\"
-    if not os.path.exists(save_path):
-        os.mkdir(save_path)
-
-    # 3. 샘플 수와 특징 정의 (원본 코드 참조)
-    # samples: 각 라벨당 뽑을 샘플 수 (데이터가 적다면 숫자를 줄이세요, 예: 100)
-    samples = [500] * 100 # 넉넉하게 100개 클래스라고 가정
-    features = ["payload", "length", "time", "direction", "message_type"]
-
-    # 4. 실행 (두 단계로 진행됩니다)
-    
-    # [1단계] PCAP을 세션별로 쪼개기 (SplitCap 실행)
-    # 처음엔 splitcap=True로 실행해야 합니다.
-    print("--- 1단계: 세션 분할 시작 ---")
-    generation(pcap_path, samples, features, splitcap=True, dataset_save_path=save_path, dataset_level="flow")
-    
-    # [2단계] 쪼개진 파일에서 데이터셋(JSON) 만들기
-    # 1단계가 끝나면 위 줄을 주석 처리하고 아래 줄의 주석을 푸세요.
-    # 이때 pcap_path는 splitcap 폴더 내부를 가리켜야 합니다.
-    
-    # print("--- 2단계: 데이터셋 생성 시작 ---")
-    # split_folder = pcap_path + "splitcap\\"
-    # X, Y = generation(split_folder, samples, features, splitcap=False, dataset_save_path=save_path, dataset_level="flow")
