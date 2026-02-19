@@ -21,10 +21,10 @@ import dataset_generation
 import data_preprocess
 import open_dataset_deal
 
-_category = 84 # dataset class
-dataset_dir = "E:\\datasets\\" # the path to save dataset for dine-tuning
+_category = 81 # dataset class
+dataset_dir = "C:\\ntc\\datasets\\" # the path to save dataset for dine-tuning
 
-pcap_path, dataset_save_path, samples, features, dataset_level = "E:\\captures\\splitcap\\", "E:\\datasets\\", [489], ["payload"], "flow"
+pcap_path, dataset_save_path, samples, features, dataset_level = "C:\\ntc\\captures\\splitcap\\", "C:\\ntc\\datasets\\", [489], ["payload"], "flow"
 
 def dataset_extract(model):
     
@@ -211,7 +211,7 @@ if __name__ == '__main__':
     if file2dir:
         open_dataset_deal.dataset_file2dir(pcap_path)
 
-    splitcap_finish = 0
+    splitcap_finish = 1
     if splitcap_finish:
         samples = count_label_number(samples)
     else:

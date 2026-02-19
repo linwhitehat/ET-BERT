@@ -20,7 +20,7 @@ from flowcontainer.extractor import extract
 
 random.seed(40)
 
-word_dir = "E:\\ET-BERT-main\\ET-BERT-main\\corpora"
+word_dir = "C:\\ntc\\code\\ET-BERT-main\\corpora"
 word_name = "encrypted_burst.txt"
 
 def convert_pcapng_2_pcap(pcapng_path, pcapng_file, output_path):
